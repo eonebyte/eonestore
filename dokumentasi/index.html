@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+<link href="assets/images/favicon.png" rel="icon" />
+<title>Documentation | EoneStore</title>
+<meta name="description" content="Your ThemeForest item Name and description">
+<meta name="author" content="harnishdesign.net">
+
+<!-- Stylesheet
+============================== -->
+<!-- Bootstrap -->
+<link rel="stylesheet" type="text/css" href="assets/vendor/bootstrap/css/bootstrap.min.css" />
+<!-- Font Awesome Icon -->
+<link rel="stylesheet" type="text/css" href="assets/vendor/font-awesome/css/all.min.css" />
+<!-- Magnific Popup -->
+<link rel="stylesheet" type="text/css" href="assets/vendor/magnific-popup/magnific-popup.min.css" />
+<!-- Highlight Syntax -->
+<link rel="stylesheet" type="text/css" href="assets/vendor/highlight.js/styles/github.css" />
+<!-- Custom Stylesheet -->
+<link rel="stylesheet" type="text/css" href="assets/css/stylesheet.css" />
+</head>
+
+<body data-spy="scroll" data-target=".idocs-navigation" data-offset="125">
+
+<!-- Preloader -->
+<div class="preloader">
+  <div class="lds-ellipsis">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+</div>
+<!-- Preloader End --> 
+
+<!-- Document Wrapper   
+=============================== -->
+<div id="main-wrapper"> 
+  
+  <!-- Header
+  ============================ -->
+  <header id="header" class="sticky-top"> 
+    <!-- Navbar -->
+    <nav class="primary-menu navbar navbar-expand-lg navbar-dropdown-dark">
+      <div class="container-fluid">
+        <!-- Sidebar Toggler -->
+		<button id="sidebarCollapse" class="navbar-toggler d-block d-md-none" type="button"><span></span><span class="w-75"></span><span class="w-50"></span></button>
+		
+		<!-- Logo --> 
+        <a class="logo ml-md-3" href="index.html" title="iDocs Template"> <img src="assets/images/eone-logo-tr.png" alt="Eone"/> </a> 
+		<span class="text-2 ml-2">v1.0</span> 
+        <!-- Logo End -->
+        
+		<!-- Navbar Toggler -->
+		<button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#header-nav"><span></span><span></span><span></span></button>
+        
+	
+      </div>
+    </nav>
+    <!-- Navbar End --> 
+  </header>
+  <!-- Header End --> 
+  
+  <!-- Content
+  ============================ -->
+  <div id="content" role="main">
+    
+	<!-- Sidebar Navigation
+	============================ -->
+	<div class="idocs-navigation bg-light">
+      <ul class="nav flex-column ">
+        <li class="nav-item"><a class="nav-link active" href="#idocs_start">Getting Started</a>
+          <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="#idocs_prepare">Prepare</a></li>
+            <li class="nav-item"><a class="nav-link" href="#idocs_upload_hosting">Upload ke Hosting</a></li>
+            <li class="nav-item"><a class="nav-link" href="#idocs_config">Configuration</a></li>
+            <li class="nav-item"><a class="nav-link" href="#idocs_installation">Installation</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    
+    <!-- Docs Content
+	============================ -->
+    <div class="idocs-content">
+      <div class="container"> 
+        
+        <!-- Getting Started
+		============================ -->
+        <section id="idocs_start">
+        <h1>Documentation</h1>
+        <h2>EoneStore</h2>
+        <p class="lead">Thank you so much for purchasing our item.</p>
+		<hr>
+		<div class="row">
+			<div class="col-sm-6 col-lg-4">
+				<ul class="list-unstyled">
+					<li><strong>Version:</strong> 1.0</li>
+					<li><strong>Author:</strong> <a href="https://wa.me/6288290847676?text=Hallo,%20Admin%20EoneStore" target="_blank">Ahmad Fauzi Ridwan</a></li>
+				</ul>
+			</div>
+			<div class="col-sm-6 col-lg-4">
+				<ul class="list-unstyled">
+					<li><strong class="font-weight-700">Created:</strong> 01 Juli, 2023</li>
+					<li><strong>Update:</strong> 20 August, 2023</li>
+				</ul>
+			</div>
+		</div>
+        <p class="alert alert-info">If you have any questions that are beyond the scope of this help file, Please feel free to email via <a target="_blank" href="https://wa.me/6288290847676?text=Hallo,%20Admin%20EoneStore">Item Support Page</a>.</p>
+        </section>
+        
+		<hr class="divider">
+
+    <!-- Prepare
+		============================ -->
+
+    <section id="idocs_prepare">
+      <h2>Prepare</h2>
+      <p class="lead">Before installing let's first prepare the data needed:</p>
+      <ol>
+        <li>
+          <strong>Persiapkan API Key Raja Ongkir:</strong>
+          Sebelum menggunakan layanan Raja Ongkir, Anda perlu mempersiapkan kunci API yang diperlukan untuk mengautentikasi permintaan Anda. Berikut adalah langkah-langkah untuk mendapatkan kunci API:
+          <ul>
+            <li><strong>Langkah 1:</strong> Masuk ke akun Anda di Raja Ongkir Dashboard.</li>
+            <li><strong>Langkah 2:</strong> Navigasi ke bagian "Pengaturan Akun" atau "API Key" di dashboard Anda.</li>
+            <li><strong>Langkah 3:</strong> Klik tombol "Buat API Key" atau sejenisnya.</li>
+            <li><strong>Langkah 4:</strong> Salin dan simpan kunci API yang dihasilkan. Pastikan untuk merahasiakannya dan tidak membagikannya dengan orang lain.</li>
+          </ul>
+          <img src="/assets/images/Screenshot_9.png" width="90%" alt="">
+        </li>
+        <li>
+          <strong>Persiapkan API Key Midtrans:</strong>
+          Untuk mengintegrasikan pembayaran dengan Midtrans, Anda perlu memiliki kunci API yang akan digunakan untuk berkomunikasi dengan sistem pembayaran Midtrans. Berikut adalah cara mendapatkan kunci API Midtrans:
+          <ul>
+            <li><strong>Langkah 1:</strong> Login ke akun Midtrans Anda di Midtrans Dashboard.</li>
+            <li><strong>Langkah 2:</strong> Navigasi ke bagian "Settings" atau "API Configuration" di dashboard Anda.</li>
+            <li><strong>Langkah 3:</strong> Di bagian "API Access Key", klik tombol "Generate New Key".</li>
+            <li><strong>Langkah 4:</strong> Salin dan simpan kunci API yang dihasilkan. Ingatlah untuk menjaga kerahasiaan kunci ini.</li>
+          </ul>
+          <img src="/assets/images/Screenshot_10.png" width="90%" alt="">
+        </li>
+        <li>
+          <strong>Persiapkan Midtrans Authorization:</strong>
+          Setiap permintaan yang Anda kirimkan ke Midtrans API perlu diotorisasi dengan menggunakan kunci enkripsi. Berikut adalah link untuk membuat otorisasi:
+          <a href="https://docs.midtrans.com/reference/get-transaction-status">di sini</a>
+          <img src="/assets/images/auth.PNG" alt=""><br>
+          <small>ganti <strong>"abc"</strong> dengan key midtrans milik Anda, di sana contoh jika saya masukan abc akan menghasilkan <strong>"Basic YWJjOg=="</strong></small>
+        </li>
+      </ol>
+    </section>
+
+     <!-- upload
+		============================ -->
+    <section id="idocs_upload_hosting">
+      <h2>Upload ke Hosting</h2>
+      <p class="lead">Panduan Install & Upload ke Hosting: <a href="https://www.domainesia.com/panduan/cara-install-golang-di-hosting/" target="_blank">Di sini</a></p>
+    </section>
+		
+        <!-- Configuration
+		============================ -->
+        <section id="idocs_config">
+          <h2>Configuration</h2>
+          <p class="lead">Berikut langkah - langkah konfigurasi:</p>
+          <ol>
+            <li>Buat database di akun hosting Anda lalu import file <strong>eone_store.sql</strong> yang disertakan di dalam folde .zip</li>
+            <li>Edit File <strong>.ENV</strong> sesuaikan dengan data koneksi Anda</li>
+            <ul>
+              <li>
+                <img src="/assets/images/edit file env.png" width="90%" alt="">
+              </li>
+              <li>
+                <img src="/assets/images/env 3.png" width="90%" alt="">
+              </li>
+            </ul>
+            <li>Buat file <strong>.htaccess</strong></li>
+            <ul>
+              <li>
+                <img src="/assets/images/file htaccess.png" width="90%" alt="">
+              </li>
+              <li>
+                <code>Options +FollowSymLinks -Indexes
+                  IndexIgnore *
+                   
+                  DirectoryIndex
+                   
+                   <IfModule mod_rewrite.c>
+                   
+                  RewriteEngine on
+                   
+                  # Simple URL redirect:
+                   
+                  RewriteRule ^(.*)$ http://127.0.0.1:8090/$1 [P]
+                   
+                   </IfModule></code>
+              </li>
+              <li>
+                <img src="/assets/images/ht acces 3.png" width="90%" alt="">
+              </li>
+            </ul>
+          </ol>
+        </section>
+
+        <!-- Installation
+		============================ -->
+    <section id="idocs_installation">
+      <h2>Installation</h2>
+      <p class="lead">Berikut langkah - langkah installasi:</p>
+      <ol>
+        <li>jika langkah-langkah dari Prepare s/d Configuration sudah selesai, silahkan akses domain Anda yang sudah diatur di file <strong>.env</strong>,<strong>http://example.com/</strong> maka akan auto diarahkan ke halaman setup seperti gambar berikut :</li>
+        <small style="border: solid 1px; border-color: brown; padding: 3px;">masukan licence key yang telah disertakan pada file <strong>licence.txt</strong></small>
+        <hr>
+        <img src="/assets/images/setup.png" width="90%" alt="">
+        <li>jika sudah selesai maka akan diarahkan ke halaman auth, silahkan login dengan akun admin yang Anda atur di halaman <strong>setup</strong></li>
+        <li>Atur pengaturan di menu <strong>Settings</strong> untuk memasukan logo dll.</li>
+        <img src="/assets/images/setting.png" width="90%" alt="">
+      </ol>
+    </section>
+        
+		<hr class="divider">
+      </div>
+    </div>
+	
+  </div>
+  <!-- Content end --> 
+  
+  <!-- Footer
+  ============================ -->
+  <footer id="footer" class="section bg-dark footer-text-light">
+    <div class="container">
+      <p class="text-center">Copyright &copy; 2023 <a href="https://eone.biz.id/">Eone</a>. All Rights Reserved.</p>
+    </div>
+  </footer>
+  <!-- Footer end -->
+  
+</div>
+<!-- Document Wrapper end --> 
+
+<!-- Back To Top --> 
+<a id="back-to-top" data-toggle="tooltip" title="Back to Top" href="javascript:void(0)"><i class="fa fa-chevron-up"></i></a> 
+
+<!-- JavaScript
+============================ -->
+<script src="assets/vendor/jquery/jquery.min.js"></script> 
+<script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script> 
+<!-- Highlight JS -->
+<script src="assets/vendor/highlight.js/highlight.min.js"></script> 
+<!-- Easing --> 
+<script src="assets/vendor/jquery.easing/jquery.easing.min.js"></script> 
+<!-- Magnific Popup --> 
+<script src="assets/vendor/magnific-popup/jquery.magnific-popup.min.js"></script> 
+<!-- Custom Script -->
+<script src="assets/js/theme.js"></script>
+</body>
+</html>

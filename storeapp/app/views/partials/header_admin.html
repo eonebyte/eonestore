@@ -1,0 +1,170 @@
+<!--Main Navigation-->
+<header>
+  <!-- Sidebar -->
+  <nav x-data="header_admin" id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
+    <div class="position-sticky">
+      <div class="list-group list-group-flush mx-3 mt-4">
+        {{if eq .UserData.Role "user"}}
+        <a href="/dashboard" :class="{ 'active' : dashboardUrl }" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard</span>
+        </a>
+        {{end}}
+        {{if eq .UserData.Role "admin"}}
+        <a href="/dashboard/admin" :class="{ 'active' : dashboardAdminUrl }" class="list-group-item list-group-item-action py-2 ripple" aria-current="true">
+          <i class="fas fa-tachometer-alt fa-fw me-3"></i><span>Dashboard Admin</span>
+        </a>
+        {{end}}
+        {{if eq .UserData.Role "user"}}
+        <a href="/dashboard/orders" :class="{ 'active' : ordersUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-cart-flatbed fa-fw me-3"></i><span>Pesanan Saya</span>
+        </a>
+        <a href="/dashboard/keranjang" :class="{ 'active' : keranjangUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-cart-shopping fa-fw me-3"></i><span>Keranjang Saya</span>
+        </a>
+        {{end}}
+        {{if eq .UserData.Role "admin"}}
+        <a href="/dashboard/categories" :class="{ 'active' : categoryUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-table-cells-large fa-fw me-3"></i><span>Categories</span>
+        </a>
+        <a href="/dashboard/products" :class="{ 'active' : productUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-cube fa-fw me-3"></i><span>Products</span>
+        </a>
+        <a href="/dashboard/admin-orders" :class="{ 'active' : adminOrderUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-cart-flatbed fa-fw me-3"></i><span>Orders</span>
+        </a>
+        <a href="/dashboard/shippings" :class="{ 'active' : shippingUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-truck fa-fw me-3"></i><span>Shippings</span>
+        </a>
+        <a href="/dashboard/banners" :class="{ 'active' : bannerUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="far fa-images fa-fw me-3"></i><span>Banners</span>
+        </a>
+        <a href="/dashboard/users" :class="{ 'active' : userUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="far fa-circle-user fa-fw me-3"></i><span>Users</span>
+        </a>
+        <a href="/dashboard/settings" :class="{ 'active' : settingUrl }" class="list-group-item list-group-item-action py-2 ripple">
+          <i class="fas fa-gears fa-fw me-3"></i><span>Settings</span>
+        </a>
+        {{end}}
+      </div>
+    </div>
+  </nav>
+  <!-- Sidebar -->
+
+  <!-- Navbar -->
+  <nav id="main-navbar" class="navbar navbar-expand-lg navbar-light bg-white fixed-top">
+    <!-- Container wrapper -->
+    <div x-data="header_admin" class="container-fluid">
+      <!-- Toggle button -->
+      <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#sidebarMenu"
+              aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+      </button>
+
+      <!-- Brand -->
+      <a class="navbar-brand" href="/">
+        <img src="/img/{{.Setting.Logo}}" height="25" alt=""
+             loading="lazy" />
+      </a>
+      <!-- Search form -->
+<!--      <form class="d-none d-md-flex input-group w-auto my-auto">-->
+<!--        <input autocomplete="off" type="search" class="form-control rounded"-->
+<!--               placeholder='Search (ctrl + "/" to focus)' style="min-width: 225px" />-->
+<!--        <span class="input-group-text border-0"><i class="fas fa-search"></i></span>-->
+<!--      </form>-->
+
+      <!-- Right links -->
+      <ul class="navbar-nav ms-auto d-flex flex-row">
+        <!-- Notification dropdown -->
+<!--        <li class="nav-item dropdown">-->
+<!--          <a class="nav-link me-3 me-lg-0 dropdown-toggle hidden-arrow" href="#" id="navbarDropdownMenuLink1"-->
+<!--             role="button" data-mdb-toggle="dropdown" aria-expanded="false">-->
+<!--            <i class="fas fa-bell"></i>-->
+<!--            <span class="badge rounded-pill badge-notification bg-danger">1</span>-->
+<!--          </a>-->
+<!--          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink1">-->
+<!--            <li><a class="dropdown-item" href="#">Some news</a></li>-->
+<!--            <li><a class="dropdown-item" href="#">Another news</a></li>-->
+<!--            <li>-->
+<!--              <a class="dropdown-item" href="#">Something else here</a>-->
+<!--            </li>-->
+<!--          </ul>-->
+<!--        </li>-->
+
+        <!-- Avatar -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle hidden-arrow d-flex align-items-center" href="#"
+             id="navbarDropdownMenuLink" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+<!--            <img src="https://mdbootstrap.com/img/Photos/Avatars/img (31).jpg" class="rounded-circle"-->
+<!--                 height="22" alt="" loading="lazy" />-->
+            <i class="far fa-circle-user"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdownMenuLink">
+           <li><a class="dropdown-item" href="/dashboard/profil-user">My profile</a></li>
+<!--            <li><a class="dropdown-item" href="#">Settings</a></li>-->
+            <li><a class="dropdown-item" href="/auth/logout">Logout</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <!-- Container wrapper -->
+  </nav>
+  <!-- Navbar -->
+</header>
+<!--Main Navigation-->
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('header_admin', () => ({
+      baseUrl: "{{.Url}}",
+      urlPath: "{{.UrlPath}}",
+      dashboardUrl: false,
+      ordersUrl: false,
+      keranjangUrl: false,
+      categoryUrl: false,
+      productUrl: false,
+      bannerUrl: false,
+      userUrl: false,
+      settingUrl: false,
+      shippingUrl: false,
+      adminOrderUrl: false,
+      dashboardAdminUrl: false,
+      init(){
+        switch(this.urlPath){
+          case this.baseUrl+"/dashboard":
+            this.dashboardUrl = true;
+            break;
+          case this.baseUrl+"/dashboard/admin":
+            this.dashboardAdminUrl = true;
+            break;
+          case this.baseUrl + "/orders":
+            this.ordersUrl = true;
+            break;
+          case this.baseUrl + "/keranjang":
+            this.keranjangUrl = true;
+            break;
+          case this.baseUrl + "/categories":
+            this.categoryUrl = true;
+            break;
+          case this.baseUrl + "/products":
+            this.productUrl = true;
+            break;
+          case this.baseUrl + "/admin-orders":
+            this.adminOrderUrl = true;
+            break;
+          case this.baseUrl + "/shippings":
+            this.shippingUrl = true;
+            break;
+          case this.baseUrl + "/banners":
+            this.bannerUrl = true;
+            break;
+          case this.baseUrl + "/users":
+            this.userUrl = true;
+            break;
+          case this.baseUrl + "/settings":
+            this.settingUrl = true;
+            break;
+        }
+      },
+    }))
+  });
+</script>

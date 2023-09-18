@@ -1,0 +1,263 @@
+{{template "partials/header" .sessionData}}
+{{template "partials/carousel" .banners}}
+<!--Main layout-->
+<main>
+    <div x-data="cartStore" class="container">
+        <!-- Modal Cart -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="exampleSideModal1">Product in the cart</h5>
+                        <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div x-show="cart.length > 0">
+                                    <ol class="list-group list-group-light list-group-numbered">
+                                        <template x-for="(item, index) in cart">
+                                            <li class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-md-10">
+                                                        <img :src="item.image" width="100" class="img-fluid" alt="" />
+                                                        <span x-text="item.name"></span>
+                                                        <br>
+                                                        <span>Harga Satuan : Rp. <span
+                                                                x-text="item.price"></span></span>
+                                                        <br>
+                                                        <span>Quantity : <span x-text="item.quantity"></span></span>
+                                                        <br>
+                                                        <span>Jumlah Harga : Rp. <span
+                                                                x-text="item.price * item.quantity"></span></span>
+                                                    </div>
+                                                    <div class="col-auto d-flex align-items-center">
+                                                        <button class="btn btn-danger align-self-center"
+                                                            @click="removeFromCart(index)">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </template>
+                                    </ol>
+                                    <p class="fs-3">Total: <span x-text="calculateTotal()"></span></p>
+                                </div>
+                                <div x-show="cart.length === 0">
+                                    <p>Keranjang belanja kosong.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/dashboard/keranjang" type="button" class="btn btn-info">Go to the cart</a>
+                        <button type="button" class="btn btn-outline-info" data-mdb-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Modal Cart -->
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark mt-3 mb-3 shadow p-2" style="background-color: #54b4d3">
+            <!-- Container wrapper -->
+            <div class="container-fluid">
+
+                <!-- Navbar brand -->
+                <a class="navbar-brand" href="#">Search:</a>
+
+                <!-- Toggle button -->
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse"
+                    data-mdb-target="#navbarSupportedContent2" aria-controls="navbarSupportedContent2"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+
+                <!-- Collapsible wrapper -->
+                <div class="collapse navbar-collapse" id="navbarSupportedContent2">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                        <li class="nav-item acitve">
+                            <a class="nav-link text-white" href="/">All</a>
+                        </li>
+                        <li class="nav-item">
+                            <div class="btn-group dropend">
+                                <button type="button" class="btn btn-white dropdown-toggle" data-mdb-toggle="dropdown"
+                                    aria-expanded="false">
+                                    Categories
+                                </button>
+                                <ul class="dropdown-menu">
+                                    {{range $index, $category := .categories}}
+                                    <li><a class="dropdown-item"
+                                            href="/?category={{$category.ID}}">{{$category.Name}}</a></li>
+                                    {{end}}
+                                </ul>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                    <!-- Search -->
+                    <div class="d-flex align-items-center">
+                        <input id="search-input" type="search" name="search" class="form-control rounded-0"
+                            placeholder="Search" aria-label="Search">
+                        <button id="search-button" type="button" class="btn btn-primary">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <!-- Container wrapper -->
+        </nav>
+
+        <!-- Navbar -->
+        <!-- Products -->
+        <section>
+            <div class="text-center">
+                <div class="row">
+
+                    {{range $index, $elem := .items}}
+                    <!-- Column -->
+                    <div class="col-lg-3 col-md-6 col-6 mb-3">
+                        <!-- Card -->
+                        <div class="card">
+                            <div class="bg-image hover-zoom ripple ripple-surface ripple-surface-light"
+                                data-mdb-ripple-color="light">
+                                <img src="/img/items/{{$elem.Image}}" class="img-item" />
+                            </div>
+                            <div class="card-body p-2">
+                                <a href="/item/{{$elem.ID}}" class="text-reset mb-0">
+                                        <p class="custom-text m-0">
+                                        <span class="truncated-txt">
+                                            {{$elem.Name}}
+                                          </span>
+                                        </p>
+                                </a>
+                                <p class="custom-category m-0">
+                                    <span class="badge badge-info">Diskon {{$elem.DiscountPercentage}}%</span>
+                                </p>
+                                <hr class="my-1">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="d-flex justify-content-center align-items-center">
+                                        <p class="custom-text m-0">
+                                            <span class="me-1">
+                                                <del>{{$elem.OriginalPriceString }}</del>
+                                              </span>
+                                        </p>
+                                    </div>
+                                    <div class="">
+                                        <a href="/item/{{$elem.ID}}" class="d-flex justify-content-center align-items-center text-reset">
+                                            <p class="custom-text m-0 text-info">
+                                                {{$elem.FinalPriceString }}
+                                            </p>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Card -->
+                    </div>
+                    <!-- End Column -->
+                    {{end}}
+
+                </div>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+            <ul class="pagination">
+                <li class="page-item {{ if le .page 1 }}disabled{{ end }}">
+                    <a class="page-link" href="/?page={{ .previousPage }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                {{ if gt .totalPages 1 }}
+                {{ range $i, $totalPage := (seq .totalPages) }}
+                <li class="page-item {{ if eq (addIndex $i 1) $.page }}active{{ end }}"><a class="page-link"
+                        href="/?page={{ addIndex $i 1 }}">{{ addIndex $i 1 }}</a></li>
+
+                {{ end }}
+                {{ end }}
+                <li class="page-item {{ if ge .page .totalPages }}disabled{{ end }}">
+                    <a class="page-link" href="/?page={{ .nextPage }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <!-- Pagination -->
+    </div>
+</main>
+<!--Main layout-->
+{{template "partials/footer" .sessionData}}
+<script>
+
+    const searchInput = document.getElementById("search-input");
+    const searchButton = document.getElementById("search-button");
+
+    searchButton.addEventListener("click", function () {
+        const searchTerm = searchInput.value;
+        if (searchTerm.trim() !== "") {
+            window.location.href = `/?search=${encodeURIComponent(searchTerm)}`;
+        }
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('cartStore', () => ({
+            cart: [], // Array to store shopping cart items
+            getLen: 0,
+
+            init() {
+                this.$watch('cart.length', (newValue, oldValue) => {
+                    this.getCartLength(newValue)
+                    console.log('Nilai data reaktif open berubah: ', newValue, 'dari', oldValue);
+
+                })
+                // This code will be executed before Alpine
+                // initializes the rest of the component.
+                const cartData = localStorage.getItem('cart');
+                if (cartData) {
+                    this.cart = JSON.parse(cartData);
+                    console.log(this.cart)
+                }
+            },
+
+
+            getCartLength(newValue) {
+                this.getLen = newValue
+            },
+
+            // Function to calculate the total price of the shopping cart
+            calculateTotal() {
+                let total = 0;
+                for (let i = 0; i < this.cart.length; i++) {
+                    total += this.cart[i].price * this.cart[i].quantity;
+                }
+                return "Rp " + total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+
+            // Function to remove an item from the shopping cart based on its index
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.saveCart();
+                this.updateCart();
+            },
+
+            // Function to save the cart data to local storage
+            saveCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+
+
+            updateCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+            $watch: {
+                cart: function () {
+                    localStorage.setItem('cart', JSON.stringify(this.cart));
+                }
+            }
+
+        }))
+    });
+</script>

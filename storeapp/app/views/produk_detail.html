@@ -1,0 +1,237 @@
+{{template "partials/header" .sessionData}}
+<main class="mt-5 pt-4">
+  <button onclick="history.back()" class="m-3 btn btn-primary">Kembali</button>
+<br>
+
+  <div x-data="cartStore" class="container mt-5">
+
+    <!-- Modal Cart -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title" id="exampleSideModal1">Product in the cart</h5>
+            <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div x-show="cart.length > 0">
+                  <ol class="list-group list-group-light list-group-numbered">
+                    <template x-for="(item, index) in cart">
+                      <li class="list-group-item">
+                        <div class="row">
+                          <div class="col-md-10">
+                            <img :src="item.image" width="100" class="img-fluid" alt="" />
+                            <span x-text="item.name"></span>
+                            <br>
+                            <span>Harga Satuan : Rp. <span x-text="item.price"></span></span>
+                            <br>
+                            <span>Quantity : <span x-text="item.quantity"></span></span>
+                            <br>
+                            <span>Jumlah Harga : Rp. <span x-text="item.price * item.quantity"></span></span>
+                          </div>
+                          <div class="col-auto d-flex align-items-center">
+                            <button class="btn btn-danger align-self-center" @click="removeFromCart(index)">Hapus</button>
+                          </div>
+                        </div>
+                      </li>
+                    </template>
+                  </ol>
+                  <p class="fs-3">Total: <span x-text="calculateTotal()"></span></p>
+                </div>
+                <div x-show="cart.length === 0">
+                  <p>Keranjang belanja kosong.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="/dashboard/keranjang" type="button" class="btn btn-info">Go to the cart</a>
+            <button type="button" class="btn btn-outline-info" data-mdb-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal Cart -->
+
+    <!--Grid row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-md-6 mb-4">
+        <img src="/img/items/{{.item.Image}}" class="img-fluid" alt="" />
+      </div>
+      <!--Grid column-->
+      <!--Grid column-->
+      <div class="col-md-6 mb-4">
+        <!--Content-->
+        <div class="p-4">
+          <div class="mb-3">
+            <h3>{{.item.Name}}</h3>
+          </div>
+
+          <p class="lead">
+            <span class="me-1">
+              <del>{{.item.OriginalPriceString }}</del>
+            </span>
+            <span>{{.item.FinalPriceString}}</span>
+          </p>
+
+          <p class="fs-3"><span class="badge badge-info">Diskon {{.item.DiscountPercentage}}%</span></p>
+
+          <strong>
+            <p style="font-size: 20px;">Description</p>
+          </strong>
+
+          <p>{{.item.Description}}</p>
+
+          <div class="d-flex justify-content-left">
+            <!-- Default input -->
+            <div class="form-outline me-1" style="width: 100px;">
+              <input x-model="jumlahItems" type="number" min="1" class="form-control" />
+            </div>
+            <button @click="addToCart(jumlahItems)" class="btn btn-primary ms-1" type="submit">
+              Add to cart
+              <i class="fas fa-shopping-cart ms-1"></i>
+            </button>
+          </div>
+        </div>
+        <!--Content-->
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+
+    <hr />
+
+    <!--Grid row-->
+    <div class="row d-flex justify-content-center">
+      <!--Grid column-->
+      <div class="col-md-6 text-center">
+        <h4 class="my-4 h4">Eksplorasi Koleksi Terkait</h4>
+
+        <p>Temukan lebih banyak pilihan yang menarik dari koleksi kami yang serupa dengan produk ini. Kami telah mengumpulkan beberapa pilihan terbaik untuk Anda:</p>
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+
+    <!--Grid row-->
+    <div class="row">
+      {{range $index, $item := .items}}
+      <!--Grid column-->
+      <div class="col-lg-4 col-md-12 mb-4">
+        <a href="/item/{{$item.ID}}">
+          <img src="/img/items/{{$item.Image}}" class="img-fluid"
+             alt="" />
+        </a>
+      </div>
+      <!--Grid column-->
+      {{end}}
+    </div>
+    <!--Grid row-->
+  </div>
+
+</main>
+<!--Main layout-->
+{{template "partials/footer" .sessionData}}
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('cartStore', () => ({
+      cart: [], // Array to store shopping cart items
+      newItemName: '', // Name of the new item to be added
+      newItemPrice: 0,
+      totalPrice: 0,
+      jumlahItems: 1,
+      getLen: 0,
+
+      init() {
+        this.$watch('cart.length', (newValue, oldValue) => {
+          this.getCartLength(newValue)
+          console.log('Nilai data reaktif open berubah: ', newValue, 'dari', oldValue);
+
+        })
+        // This code will be executed before Alpine
+        // initializes the rest of the component.
+        const cartData = localStorage.getItem('cart');
+        if (cartData) {
+          this.cart = JSON.parse(cartData);
+        }
+      },
+
+      redirect() {
+        // Replace the URL below with the desired destination
+        window.location.href = '/';
+      },
+
+      getCartLength(newValue) {
+        this.getLen = newValue
+      },
+
+      // Function to calculate the total price of the shopping cart
+      calculateTotal() {
+        let total = 0;
+        for (let i = 0; i < this.cart.length; i++) {
+          total += this.cart[i].price * this.cart[i].quantity;
+        }
+        return "Rp " + total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+      },
+
+      // Function to add an item to the shopping cart
+      addToCart(qty) {
+        if (this.jumlahItems > 0) {
+        const newItem = {
+          id: parseInt("{{.item.ID}}"), // Temporary unique ID
+          name: "{{.item.Name}}",
+          price: parseInt("{{.item.Price}}"),
+          image: "/img/items/{{.item.Image}}",
+          description: "{{.item.Description}}",
+          quantity: parseInt(qty),
+          checked: false,
+        };
+        this.cart.push(newItem);
+        console.log(this.cart)
+        this.saveCart();
+        this.newItemName = '';
+        this.newItemPrice = 0;
+        this.updateCart();
+        this.redirect();
+      }
+      },
+
+      // Function to remove an item from the shopping cart based on its index
+      removeFromCart(index) {
+        this.cart.splice(index, 1);
+        this.saveCart();
+        this.updateCart();
+      },
+
+      // Function to save the cart data to local storage
+      saveCart() {
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+      },
+
+
+      updateCart() {
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+      },
+      $watch: {
+        cart: function () {
+          localStorage.setItem('cart', JSON.stringify(this.cart));
+        }
+      }
+    }))
+  });
+</script>
+
+
+
+
+
+
+
+
+
+

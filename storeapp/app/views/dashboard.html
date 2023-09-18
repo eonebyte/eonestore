@@ -1,0 +1,68 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4 text-center">
+                <h3>Riwayat Transaksi</h3>
+                <hr>
+                <div class="table-responsive-xl">
+                <table id="dataTableDasboard" class="table table-bordered border-dark table-hover text-nowrap">
+                    <thead>
+                    <tr>
+                        <th scope="col">No.</th>
+                        <th scope="col">No. Order</th>
+                        <th scope="col">Total Amount</th>
+                        <th scope="col">Status Order</th>
+                        <th scope="col">Status Shipping</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{range $index, $order := .orders}}
+                    <tr>
+                        <th scope="row">{{ addIndex $index 1 }}</th>
+                        <td>{{$order.OrderNo}}</td>
+                        <td>{{$order.TotalAmountString}}</td>
+                        <td>
+                            {{ if eq $order.OrderStatus "pending"}}
+                            <span class="badge rounded-pill badge-primary">{{$order.OrderStatus}}</span>
+                            {{ end }}
+                            {{ if eq $order.OrderStatus "settlement"}}
+                            <span class="badge rounded-pill badge-success">{{$order.OrderStatus}}</span>
+                            {{ end }}
+                        </td>
+                        <td>
+                            {{ if eq $order.OrderStatus "settlement"}}
+                            {{ if eq $order.ShippingStatus "unshipping"}}
+                            <span class="badge rounded-pill badge-warning">{{$order.ShippingStatus}}</span>
+                            {{ end }}
+                            {{ if eq $order.ShippingStatus "shipping"}}
+                            <span class="badge rounded-pill badge-primary">{{$order.ShippingStatus}}</span>
+                            {{ end }}
+                            {{ if eq $order.ShippingStatus "accepted"}}
+                            <span class="badge rounded-pill badge-success">{{$order.ShippingStatus}}</span>
+                            {{ end }}
+                            {{ end }}
+                        </td>
+                    </tr>
+                    {{end}}
+                    </tbody>
+                </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $("#dataTableDasboard").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+    })
+</script>
+
+

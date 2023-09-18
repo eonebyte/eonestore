@@ -1,0 +1,198 @@
+
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+
+
+
+<main class="mt-5 pt-4">
+
+    <div x-data="category" class="container">
+        <div class="row">
+            
+            <div class="col-md-12 mb-4">
+                <h3>Category</h3>
+                <hr>
+                <!--Create Category-->
+                <button type="button" class="btn btn-primary mb-4" data-mdb-toggle="modal" data-mdb-target="#createCategory"><i class="fa fa-plus"></i></button>
+                <!-- End Create Category-->
+                <div class="table-responsive-xl">
+                    <table id="dataTableCategory" class="table table-hover w-100">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Name</th>
+                            <th scope="col" class="w-25">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $index, $category := .categories}}
+                        <tr>
+                            <th scope="row">{{ addIndex $index 1 }}</th>
+                            <td>{{$category.Name}}</td>
+                            <td>
+                                <!--Edit Category-->
+                                <button type="button" data-id="{{$category.ID}}" data-name="{{$category.Name}}" class="btn btn-info buttonEditCategory"><i class="far fa-pen-to-square"></i></button>
+                                <!--Delete Category-->
+                                <button type="button" data-id="{{$category.ID}}" class="btn btn-danger buttonDeleteCategory"><i class="far fa-trash-can"></i></button>
+
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Create Category -->
+        <div class="modal fade" id="createCategory" tabindex="-1" aria-labelledby="createCategoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createOrderLabel">Add Category</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="create-category" method="post" action="/dashboard/create_category">
+                            <input type="hidden" name="csrf_token" value="{{ .csrfToken }}">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control" id="catergor-name" required>
+                                <label for="catergor-name" class="form-label"></label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="createCategory" type="button" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Create Category-->
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="editCategory" tabindex="-1" aria-labelledby="createCategoryLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editOrderLabel">Update Category</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="update-category" method="post" action="/dashboard/update_category">
+                            <div class="form-outline mb-4">
+                                <input type="hidden" name="id" class="id">
+                                <input type="text" name="name" class="form-control name" id="catergor-edit" required>
+                                <label for="catergor-edit" class="form-label"></label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="updateCategory" type="button" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Edit Category-->
+
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-category" method="post" action="/dashboard/delete_category">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deteleCategory" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $('#buttonShowAlert').on('click', function(){
+            $("#alert-demo").toggleClass("show");
+        })
+        $('#buttonShowAlert2').on('click', function(){
+            $("#alert-demo").toggleClass("show");
+        })
+        $('#dataTableCategory').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+        $('#dataTableCategory').on('click', '.buttonEditCategory', function (){
+            let id = $(this).data("id")
+            let name = $(this).data("name")
+
+            $("#editCategory").modal("show");
+            $(".id").val(id)
+            $(".name").val(name)
+        });
+        $('#dataTableCategory').on('click', '.buttonDeleteCategory', function (){
+            let id = $(this).data("id")
+
+            $("#modalConfirmDelete").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('category', () => ({
+            formCreate: document.getElementById('create-category'),
+            formUpdate: document.getElementById('update-category'),
+            formDelete: document.getElementById('delete-category'),
+            loading: false,
+            deteleCategory(){
+                this.formDelete.submit();
+                this.loading = true
+            },
+            updateCategory(){
+                this.alert_update()
+            },
+            createCategory(){
+                this.alert_create()
+            },
+            alert_create() {
+                if(!confirm("Tambahkan category baru ?")) {
+                    return false;
+                }
+                this.formCreate.submit();
+                this.loading = true
+            },
+            alert_update() {
+                if(!confirm("Update category ?")) {
+                    return false;
+                }
+                this.formUpdate.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>
+
+

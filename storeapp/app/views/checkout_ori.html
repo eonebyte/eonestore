@@ -1,0 +1,486 @@
+
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="cartStore" class="container">
+        <!-- Modal Cart -->
+        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="exampleSideModal1">Product in the cart</h5>
+                        <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div x-show="cart.length > 0">
+                                    <ol class="list-group list-group-light list-group-numbered">
+                                        <template x-for="(item, index) in cart">
+                                            <li class="list-group-item">
+                                                <div class="row">
+                                                    <div class="col-md-10">
+                                                        <img :src="item.image" width="100" class="img-fluid" alt="" />
+                                                        <span x-text="item.name"></span>
+                                                        <br>
+                                                        <span>Harga Satuan : Rp. <span x-text="item.price"></span></span>
+                                                        <br>
+                                                        <span>Quantity : <span x-text="item.qty"></span></span>
+                                                        <br>
+                                                        <span>Jumlah Harga : Rp. <span x-text="item.price * item.quantity"></span></span>
+                                                    </div>
+                                                    <div class="col-auto d-flex align-items-center">
+                                                        <button class="btn btn-danger align-self-center" @click="removeFromCart(index)">Hapus</button>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        </template>
+                                    </ol>
+                                    <p class="fs-3">Total: <span x-text="calculateTotal()"></span></p>
+                                </div>
+                                <div x-show="cart.length === 0">
+                                    <p>Keranjang belanja kosong.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <a href="/dashboard/checkout" type="button" class="btn btn-info">Go to the cart</a>
+                        <button type="button" class="btn btn-outline-info" data-mdb-dismiss="modal">
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Modal Cart -->
+        <!-- Heading -->
+        <h2 class="my-5 text-center">Checkout form</h2>
+
+        {{ if .produks }}
+        <ul>
+            {{range $index, $elem := .produks}}
+            <li>{{$elem.Name}}</li>
+            {{end}}
+        </ul>
+        {{end}}
+
+        <!--Grid column Row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+                <!-- Heading -->
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Your cart</span>
+                    <span class="badge rounded-pill badge-primary" x-text="getLen"></span>
+                </h4>
+
+                <!-- Cart -->
+                <ul class="list-group mb-3">
+                    <template x-for="(item, index) in cart">
+                        <li class="list-group-item">
+                            <div class="row">
+                                <div class="col-md-10">
+                                    <img :src="item.image" width="100" class="img-fluid" alt="" />
+                                    <span x-text="item.name"></span>
+                                    <br>
+                                    <span>Harga Satuan : Rp. <span x-text="item.price"></span></span>
+                                    <br>
+                                    <span>Quantity : <span x-text="item.quantity"></span></span>
+                                    <br>
+                                    <span>Jumlah Harga : Rp. <span x-text="item.price * item.quantity"></span></span>
+                                </div>
+                                <div class="col-auto d-flex align-items-center">
+                                    <button class="btn btn-danger align-self-center" @click="removeFromCart(index)">Hapus</button>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Ongkir (IDR)</span>
+                        <template x-for="resultP in providerDetails.COURIER_PROVIDER">
+                            <template x-for="p in resultP.cost">
+                                <strong x-text="p.value"></strong>
+                            </template>
+                        </template>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Sub Total (IDR)</span>
+                        <strong x-text="calculateSubTotal()"></strong>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between">
+                        <span>Total (IDR)</span>
+                        <span><strong>Rp. </strong><strong x-text="calculateTotal()"></strong></span>
+                    </li>
+                </ul>
+                <!-- Cart -->
+
+            </div>
+            <!--Grid column-->
+        </div>
+        <!--Grid row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-md-12 mb-4">
+
+                <!--Card-->
+                <div class="card p-4">
+                    <!--Username-->
+                    <div class="mb-4 border-bottom">
+                        <p class="fs-5">Nama : {{.sessionData.UserData.Name}}</p>
+                    </div>
+
+                    <div class="mb-4 border-bottom">
+                        <p class="fs-5">Phone : {{.sessionData.UserData.Phone}}</p>
+                    </div>
+
+
+
+                    <div class="green-border-focus mb-4">
+                        <label for="alamat">Alamat :</label>
+                        <textarea x-model="alamat" id="alamat" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <p class="mb-0">
+                        Provinsi :
+                    </p>
+                    <div class="mb-4">
+                        <label for="selectProvince"></label>
+                        <select id="selectProvince" x-model="selectedProvince" class="js-example-basic-single select">
+                            <option selected>Pilih Provinsi</option>
+                            {{range $index, $elem := .provinces.Result}}
+                            <option value="{{$elem.ProvinceID}}">{{$elem.Province}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+
+                    <p class="mb-0">
+                        Kota :
+                    </p>
+                    <div class="mb-4">
+                        <label for="selectCity"></label>
+                        <select id="selectCity" x-model="selectedCity" class="js-example-basic-single select">
+                            <option selected>Pilih Kota</option>
+                            {{range $index, $elem := .cities.Result}}
+                            <option value="{{$elem.CityID}}">{{$elem.CityName}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+
+                    <p  class="mb-0">
+                        Kurir :
+                    </p>
+                    <div class="mb-4 border-bottom">
+                        <label for="selectCourier"></label>
+                        <div x-show="costOngkirShow">
+                            <select id="selectCourier" x-model="selectedCourier" class="js-example-basic-single select">
+                                <option selected>Pilih Kurir</option>
+                                <template x-for="result in destinations.JNE.results">
+                                    <template x-for="jne in result.costs">
+                                        <option :value="[result.code, jne.service]">JNE <span x-text="jne.service"></span></option>
+                                    </template>
+                                </template>
+                                <template x-for="result in destinations.TIKI.results">
+                                    <template x-for="tiki in result.costs">
+                                        <option :value="[result.code, tiki.service]">TIKI <span x-text="tiki.service"></span></option>
+                                    </template>
+                                </template>
+                                <template x-for="result in destinations.POS.results">
+                                    <template x-for="pos in result.costs">
+                                        <option :value="[result.code, pos.service]">POS <span x-text="pos.service"></span></option>
+                                    </template>
+                                </template>
+                                <!-- Add other couriers here -->
+                            </select>
+                        </div>
+                        <div x-show="costOngkirShow = false">
+                            <p>Loading data Kurir....</p>
+                        </div>
+                    </div>
+
+<!--                    Result Cost Kurir-->
+                    <div>
+                        <template x-for="resultP in providerDetails.COURIER_PROVIDER">
+                            <template x-for="p in resultP.cost">
+                                <ul>
+                                    <li>Harga : <span x-text="p.value"></span></li>
+                                    <li>Estimasi : <span x-text="p.etd"></span> Hari</li>
+                                </ul>
+                            </template>
+                        </template>
+                    </div>
+
+                    <hr class="mb-4" />
+<!--                    <button @click="tesData">Tes Data</button>-->
+                    <button @click="payButton" :disabled="buttonDisabled" id="pay-button" class="btn btn-primary" type="button">Continue to checkout</button>
+                </div>
+                <!--/.Card-->
+
+            </div>
+            <!--Grid column-->
+
+
+        </div>
+        <!--Grid row-->
+    </div>
+</main>
+
+
+<script>
+    $(document).ready(function() {
+        $('.js-example-basic-single').select2();
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('cartStore', () => ({
+            cart: [],
+            formData: {
+                order_id: '',
+                totals: '',
+                customer_details: {
+                    name: "{{.sessionData.UserData.Name}}",
+                    phone: "{{.sessionData.UserData.Phone}}",
+                    email: "{{.sessionData.UserData.Email}}",
+                    address: '',
+                },
+                items: []
+            },
+
+            alamat: '',
+            newItemName: '',
+            newItemPrice: 0,
+            totalPrice: 0,
+            jumlahItems: 1,
+            getLen: 0,
+            origin: '',
+            weight: 0,
+            shippingCost: null,
+            selectedProvince: '',
+            selectedCity: '',
+            selectedCourier: '',
+            getCourierCost: {},
+            buttonDisabled: false,
+            lastOrderId: 1000,
+            token_pay: '',
+            providerDetails: {
+                COURIER_PROVIDER: [
+                    {
+                        cost: [
+                            {value: 0, etd: ''}
+                        ]
+                    },
+                ]
+            },
+            destinations: {
+                JNE: {
+                    results: []
+                },
+                TIKI: {
+                    results: []
+                },
+                POS: {
+                    results: []
+                },
+            },
+            costOngkirShow: false,
+            payButton(){
+                this.formData.order_id = this.generateOrderId('ES-ORD');
+                this.formData.totals = this.calculateTotalForForm()
+                this.formData.items = this.cart
+                this.formData.customer_details.address = this.alamat
+                this.sendData()
+            },
+            generateOrderId(prefix) {
+                this.lastOrderId++; // Tambahkan 1 ke angka urut terakhir
+                const timestamp = Date.now().toString().substr(-6); // 6 digit dari timestamp saat ini
+                return `${prefix}-${timestamp}-${this.lastOrderId}`;
+            },
+            async sendData() {
+                let resData = await (await fetch('http://127.0.0.1:8080/api/additems', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(this.formData),
+                })).json()
+                console.log(resData)
+                this.token_pay = resData.token
+                console.log(this.token_pay)
+                this.showSnap(resData.token)
+
+            },
+            showSnap(snap_token){
+                    window.snap.pay(`${snap_token}`, {
+                        onSuccess: function (result) {
+                            /* You may add your own implementation here */
+                            alert("payment success!"); console.log(result);
+                        },
+                        onPending: function (result) {
+                            /* You may add your own implementation here */
+                            alert("wating your payment!"); console.log(result);
+                        },
+                        onError: function (result) {
+                            /* You may add your own implementation here */
+                            alert("payment failed!"); console.log(result);
+                        },
+                        onClose: function () {
+                            /* You may add your own implementation here */
+                            alert('you closed the popup without finishing the payment');
+                        }
+                    })
+            },
+            selectCity(){
+                const selectECity = this.$el.querySelector('#selectCity');
+                $(selectECity).select2();
+                $(selectECity).on('change', (event) => {
+                    this.selectedCity = event.target.value;
+                    this.getDest(this.selectedCity)
+                    this.costOngkirShow = true
+
+                });
+                this.$watch("selectedCity", (value) => {
+                    console.log(value)
+                });
+            },
+            selectCourier(){
+                const selectECourier = this.$el.querySelector('#selectCourier');
+                $(selectECourier).select2();
+                $(selectECourier).on('change', (event) => {
+                    this.selectedCourier = event.target.value;
+                    const myArray = this.selectedCourier.split(",");
+                    this.getProvider(this.selectedCity, myArray[0], myArray[1])
+                    this.buttonDisabled = false
+                });
+                this.$watch("selectedCourier", (value) => {
+                    const myArray = value.split(",");
+                    console.log(myArray[0])
+                    console.log(myArray[1])
+                });
+            },
+            selectProvince() {
+                const selectEProvince = this.$el.querySelector('#selectProvince');
+                $(selectEProvince).select2();
+                $(selectEProvince).on('change', (event) => {
+                    this.selectedProvince = event.target.value;
+                    this.getProvider()
+                });
+                this.$watch("selectedProvince", (value) => {
+                    console.log(value)
+                });
+            },
+            async getDest(dest){
+                this.destinations = await (await fetch('http://127.0.0.1:8080/api/getCost/'+ dest)).json()
+                this.$watch('destinations', (value) => {
+                    this.destinations = value
+                })
+            },
+            async getProvider(dest, code, service){
+                this.providerDetails = await (await fetch('http://127.0.0.1:8080/api/getProvider/'+ dest +'/'+ code +'/?provider=' + service)).json()
+                this.$watch('providerDetails', (value) => {
+                    this.providerDetails = value
+                })
+            },
+            init() {
+                this.selectProvince()
+                this.selectCity()
+                this.selectCourier()
+                this.$watch('cart.length', (newValue, oldValue) => {
+                    this.getCartLength(newValue, oldValue)
+                })
+                // This code will be executed before Alpine
+                // initializes the rest of the component.
+                const cartData = localStorage.getItem('cart');
+                if (cartData) {
+                    this.cart = JSON.parse(cartData);
+                }
+            },
+
+            redirect() {
+                // Replace the URL below with the desired destination
+                window.location.href = '/';
+            },
+
+            getCartLength(newValue) {
+                this.getLen = newValue
+            },
+
+            // Function to calculate the total price of the shopping cart
+            calculateTotal() {
+                let total = 0;
+                for (let i = 0; i < this.cart.length; i++) {
+                    total += this.cart[i].price * this.cart[i].quantity;
+                }
+                this.providerDetails.COURIER_PROVIDER.forEach(item => {
+                    item.cost.forEach(i => {
+                        total += i.value
+                    })
+                })
+
+                return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+            calculateTotalForForm() {
+                let total = 0;
+                for (let i = 0; i < this.cart.length; i++) {
+                    total += this.cart[i].price * this.cart[i].quantity;
+                }
+                this.providerDetails.COURIER_PROVIDER.forEach(item => {
+                    item.cost.forEach(i => {
+                        total += i.value
+                    })
+                })
+
+                return total; // Menampilkan total dengan format rupiah
+            },
+            calculateSubTotal() {
+                let subTotal = 0;
+                for (let i = 0; i < this.cart.length; i++) {
+                    subTotal += this.cart[i].price * this.cart[i].quantity;
+                }
+                return "Rp " + subTotal.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+
+            // Function to add an item to the shopping cart
+            addToCart() {
+                if (this.jumlahItems > 0) {
+                    const newItem = {
+                        id: "{{.produk.ID}}", // Temporary unique ID
+                        name: "{{.produk.Nama}}",
+                        price: parseInt("{{.produk.Harga}}"),
+                        image: "{{.produk.Gambar}}",
+                        quantity: parseInt(qty),
+                        description: "{{.produk.Deskripsi}}",
+                    };
+                    this.cart.push(newItem);
+                    console.log(this.cart)
+                    this.saveCart();
+                    this.newItemName = '';
+                    this.newItemPrice = 0;
+                    this.updateCart();
+                    this.redirect();
+                }
+            },
+
+            // Function to remove an item from the shopping cart based on its index
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.saveCart();
+                this.updateCart();
+            },
+
+            // Function to save the cart data to local storage
+            saveCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+
+
+            updateCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+            $watch: {
+                cart: function () {
+                    localStorage.setItem('cart', JSON.stringify(this.cart));
+                }
+            },
+        }))
+    });
+</script>

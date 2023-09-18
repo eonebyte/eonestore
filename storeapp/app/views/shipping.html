@@ -1,0 +1,158 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="products" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Products</h3>
+                <hr>
+                <div class="table-responsive-xl">
+                    <table id="dataTableShipping" class="table table-hover w-100">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Order Id</th>
+                            <th scope="col">Order No.</th>
+                            <th scope="col">Destination</th>
+                            <th scope="col">No Resi</th>
+                            <th scope="col">Status Shipping</th>
+                            <th scope="col" class="w-25">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $index, $shipping := .shippings}}
+                        <tr>
+                            <th scope="row">{{ addIndex $index 1 }}</th>
+                            <td>{{$shipping.OrderId}}</td>
+                            <td>{{$shipping.OrderNo}}</td>
+                            <td>{{$shipping.Destination}}</td>
+                            <td>{{$shipping.NoResi}}</td>
+                            <td>
+                                {{ if eq $shipping.StatusShipping "Sedang dikirim"}}
+                                <span class="badge rounded-pill badge-info">{{$shipping.StatusShipping}}</span>
+                                {{ end }}
+                                {{ if eq $shipping.StatusShipping "accepted"}}
+                                <span class="badge rounded-pill badge-success">{{$shipping.StatusShipping}}</span>
+                                {{ end }}
+                            </td>
+                            <td>
+                                {{ if eq $shipping.StatusShipping "Sedang dikirim"}}
+                                <!--Edit Category-->
+                                <button type="button" data-id="{{$shipping.OrderId}}" class="btn btn-info buttonUpdateShipping"><i class="far fa-pen-to-square"></i></button>
+                                {{ end }}
+                                <!--Delete Category-->
+                                <button type="button" data-id="{{$shipping.OrderId}}" class="btn btn-danger buttonDeleteShipping"><i class="far fa-trash-can"></i></button>
+
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Status Shipping -->
+        <div class="modal fade" id="editShipping" tabindex="-1" aria-labelledby="createShippingLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editShippingLabel">Update Status Shipping</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="update-shipping" method="post" action="/dashboard/update_shipping" enctype="multipart/form-data">
+                            <input type="hidden" name="id" class="id">
+                            <select name="status_shipping" class="select" >
+                                <option selected>Set Status :</option>
+                                <option value="accepted">Sudah diterima</option>
+                            </select>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="updateShipping" type="button" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal End Status Shipping -->
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDeleteShipping" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-shipping" method="post" action="/dashboard/delete_shipping">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deteleShipping" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $("#dataTableShipping").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+        $('#dataTableShipping').on('click', '.buttonUpdateShipping', function (){
+            let id = $(this).data("id")
+
+            $("#editShipping").modal("show");
+            $(".id").val(id)
+        });
+        $('#dataTableShipping').on('click', '.buttonDeleteShipping', function (){
+            let id = $(this).data("id")
+
+            $("#modalConfirmDeleteShipping").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('products', () => ({
+            formUpdate: document.getElementById('update-shipping'),
+            formDelete: document.getElementById('delete-shipping'),
+            loading: false,
+            deteleShipping(){
+                this.formDelete.submit();
+                this.loading = true
+            },
+            updateShipping(){
+                this.alert_update()
+            },
+            alert_update() {
+                if(!confirm("Update Status Shipping ?")) {
+                    return false;
+                }
+                this.formUpdate.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>
+
+

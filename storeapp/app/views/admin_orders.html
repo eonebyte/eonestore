@@ -1,0 +1,204 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="users" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>All Orders</h3>
+                <hr>
+
+                <div class="table-responsive-xl">
+                    <table id="dataTableAdminOrders" class="table table-hover w-100">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">No. Order</th>
+                            <th scope="col">Customer Name</th>
+                            <th scope="col">Customer Email</th>
+                            <th scope="col">Status Transaction</th>
+                            <th scope="col">Status Shipping</th>
+                            <th scope="col" class="w-25">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $index, $order := .orders}}
+                        <tr>
+                            <th scope="row">{{ addIndex $index 1 }}</th>
+                            <td>{{$order.OrderNo}}</td>
+                            <td>{{$order.CustomerName}}</td>
+                            <td>{{$order.Email}}</td>
+                            <td>
+                                {{ if eq $order.OrderStatus "pending"}}
+                                <span class="badge rounded-pill badge-primary">{{$order.OrderStatus}}</span>
+                                {{ end }}
+                                {{ if eq $order.OrderStatus "settlement"}}
+                                <span class="badge rounded-pill badge-success">{{$order.OrderStatus}}</span>
+                                {{ end }}
+                            </td>
+                            <td>
+                                {{ if eq $order.OrderStatus "settlement"}}
+                                {{ if eq $order.ShippingStatus "unshipping"}}
+                                <span class="badge rounded-pill badge-warning">{{$order.ShippingStatus}}</span>
+                                {{ end }}
+                                {{ if eq $order.ShippingStatus "shipping"}}
+                                <span class="badge rounded-pill badge-primary">{{$order.ShippingStatus}}</span>
+                                {{ end }}
+                                {{ if eq $order.ShippingStatus "accepted"}}
+                                <span class="badge rounded-pill badge-success">{{$order.ShippingStatus}}</span>
+                                {{ end }}
+                                {{ end }}
+                            </td>
+                            <td>
+                                {{ if eq $order.OrderStatus "settlement"}}
+                                {{ if eq $order.ShippingStatus "unshipping"}}
+                                <!--atur pengiriman-->
+                                <button type="button" data-id="{{$order.ID}}" data-order_no="{{$order.OrderNo}}" data-customer_name="{{$order.CustomerName}}" data-order_email="{{$order.Email}}" data-status_shipping="{{$order.ShippingStatus}}" data-shipping_address="{{$order.ShippingAddress}}" class="btn btn-info buttonEditAdminOrders"><i class="far fa-pen-to-square"></i></button>
+                                <!--Delete order-->
+                                {{ end }}
+                                {{ end }}
+                                <button type="button" data-id="{{$order.ID}}" class="btn btn-danger buttonDeleteAdminOrders"><i class="far fa-trash-can"></i></button>
+
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Atur pengiriman -->
+        <div class="modal fade" id="editAdminOrders" tabindex="-1" aria-labelledby="editAdminOrdersLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editItemLabel">Atur Pengiriman</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="atur-shipping" method="post" action="/dashboard/atur_shipping" enctype="multipart/form-data">
+                            <input type="hidden" name="id" class="id">
+                            <div class="form-outline mb-4">
+                                <input disabled type="text" name="order_no" class="form-control order_no" id="user-edit-name" required>
+                                <label for="user-edit-name" class="form-label">Order No.</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input disabled type="text" name="customer_name" class="form-control customer_name" id="user-edit-email" required>
+                                <label for="user-edit-email" class="form-label">Customer Name</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input disabled type="order_email" name="email" class="form-control order_email" id="email" required>
+                                <label for="email" class="form-label">Email</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input disabled type="text" name="status_shipping" class="form-control status_shipping" id="status" required>
+                                <label for="status" class="form-label">Status Shipping</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input disabled type="text" name="shipping_address" class="form-control shipping_address" id="des" required>
+                                <label for="des" class="form-label">Destination</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="text" name="resi_no" class="form-control" id="res" required>
+                                <label for="res" class="form-label">Input No Resi</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="aturShipping" type="button" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Atur pengiriman-->
+
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDeleteAdminOrders" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-admin-orders" method="post" action="/dashboard/delete_order">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deteleAdminOrders" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $("#dataTableAdminOrders").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+        $('#dataTableAdminOrders').on('click', '.buttonEditAdminOrders', function (){
+            let id = $(this).data("id")
+            let order_no = $(this).data("order_no")
+            let customer_name = $(this).data("customer_name")
+            let order_email = $(this).data("order_email")
+            let shipping_address = $(this).data("shipping_address")
+            let status_shipping = $(this).data("status_shipping")
+
+            $("#editAdminOrders").modal("show");
+            $(".id").val(id)
+            $(".order_no").val(order_no)
+            $(".customer_name").val(customer_name)
+            $(".order_email").val(order_email)
+            $(".shipping_address").val(shipping_address)
+            $(".status_shipping").val(status_shipping)
+        });
+        $('#dataTableAdminOrders').on('click', '.buttonDeleteAdminOrders', function (){
+            let id = $(this).data("id")
+
+            $("#modalConfirmDeleteAdminOrders").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('users', () => ({
+            formAturShipping: document.getElementById('atur-shipping'),
+            formDelete: document.getElementById('delete-admin-orders'),
+            loading: false,
+            deteleAdminOrders(){
+                this.formDelete.submit();
+                this.loading = true
+            },
+            aturShipping(){
+                this.alert_atur_shipping()
+            },
+            alert_atur_shipping() {
+                if(!confirm("Atur pengiriman ?")) {
+                    return false;
+                }
+                this.formAturShipping.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>
+
+

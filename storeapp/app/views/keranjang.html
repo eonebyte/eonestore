@@ -1,0 +1,285 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+  <div x-data="cartStore" class="container">
+    <!-- Modal Cart -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+          <div class="modal-header bg-info text-white">
+            <h5 class="modal-title" id="exampleSideModal1">Product in the cart</h5>
+            <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-12">
+                <div x-show="cart.length > 0">
+                  <ol class="list-group list-group-light list-group-numbered">
+                    <template x-for="(item, index) in cart">
+                      <li class="list-group-item">
+                        <div class="row">
+                          <div class="col-md-10">
+                            <img :src="item.image" width="100" class="img-fluid" alt="" />
+                            <span x-text="item.name"></span>
+                            <br>
+                            <span>Harga Satuan : Rp. <span x-text="item.price"></span></span>
+                            <br>
+                            <span>Quantity : <span x-text="item.qty"></span></span>
+                            <br>
+                            <span>Jumlah Harga : Rp. <span x-text="item.price * item.quantity"></span></span>
+                          </div>
+                          <div class="col-auto d-flex align-items-center">
+                            <button class="btn btn-danger align-self-center" @click="removeFromCart(index)">Hapus</button>
+                          </div>
+                        </div>
+                      </li>
+                    </template>
+                  </ol>
+                  <p class="fs-3">Total: <span x-text="calculateTotal()"></span></p>
+                </div>
+                <div x-show="cart.length === 0">
+                  <p>Keranjang belanja kosong.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <a href="/dashboard/checkout" type="button" class="btn btn-info">Go to the cart</a>
+            <button type="button" class="btn btn-outline-info" data-mdb-dismiss="modal">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End Modal Cart -->
+    <!-- Heading -->
+    <h3>Keranjang Belanja</h3>
+    <hr>
+
+    <!--Grid column Row-->
+    <div class="row">
+      <!--Grid column-->
+      <div class="col-md-12 mb-4">
+        <!-- Heading -->
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span class="badge rounded-pill badge-primary" x-text="getLen"></span>
+        </h4>
+
+        <div x-show="cart.length > 0">
+          <div class="form-check mb-2">
+            <input type="checkbox" class="form-check-input" @click="selectAll($event)">
+            <label class="form-check-label">Check All</label>
+          </div>
+          <!-- Cart -->
+          <ul class="list-group mb-3">
+            <template x-for="(item, index) in cart">
+              <li class="list-group-item">
+                <div class="row">
+                  <div class="form-check col-auto">
+                    <input class="form-check-input" type="checkbox" :checked="item.checked" @click="updateItem(item.id, $event)"/>
+                  </div>
+                  <div class="col-md-10">
+                    <img :src="item.image" width="100" class="img-fluid" alt="" />
+                    <span x-text="item.name"></span>
+                    <br>
+                    <span>Harga Satuan : Rp. <span x-text="item.price"></span></span>
+                    <br>
+                    <span>Quantity : <span x-text="item.quantity"></span></span>
+                    <br>
+                    <span>Jumlah Harga : Rp. <span x-text="item.price * item.quantity"></span></span>
+                  </div>
+                  <div class="col-auto d-flex align-items-center">
+                    <button class="btn btn-danger align-self-center" @click="removeFromCart(index)"><i class="far fa-trash-can"></i></button>
+                  </div>
+                </div>
+              </li>
+            </template>
+            <li class="list-group-item d-flex justify-content-between">
+              <span>Total (IDR)</span>
+              <span><strong>Rp. </strong><strong x-text="calculateTotal()"></strong></span>
+            </li>
+          </ul>
+          <!-- Cart -->
+        </div>
+
+        <div x-show="cart.length === 0">
+          <div class="text-center">
+            <h4>Keranjang belanja kosong ....</h4>
+            Silahkan <a href="/">Klik di sini untuk memilih produk</a>
+          </div>
+        </div>
+
+      </div>
+      <!--Grid column-->
+    </div>
+    <!--Grid row-->
+    <div class="row">
+      <div class="col-md-12 mb-4 text-center">
+        <button x-show="!showButtonBuatPesanan" :disabled="showButtonBuatPesanan" type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#createOrder">Buat Pesanan</button>
+      </div>
+    </div>
+
+    <!-- Modal Submit -->
+    <div class="modal fade" id="createOrder" tabindex="-1" aria-labelledby="createOrderLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="createOrderLabel">Konfirmasi Buat Pesanan</h5>
+            <div x-show="loading" class="spinner-border text-info text-center" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+            <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+            <button @click="buatPesanan" type="button" class="btn btn-primary">Lanjut</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!--  End Modal Submit-->
+  </div>
+
+
+</main>
+
+
+<script>
+  $(document).ready(function() {
+    $('.js-example-basic-single').select2();
+  });
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('cartStore', () => ({
+      cart: [],
+      cartSelected: [],
+      formCart: {},
+      customerId: "{{.sessionData.UserData.Id}}",
+      formData: {
+        order_id: '',
+        totals: '',
+        customer_details: {
+          name: "{{.sessionData.UserData.Name}}",
+          phone: "{{.sessionData.UserData.Phone}}",
+          email: "{{.sessionData.UserData.Email}}",
+          address: '',
+        },
+        items: []
+      },
+      loading: false,
+      allChecked: false,
+      alamat: '',
+      getLen: 0,
+      lastOrderId: 1000,
+      token_pay: '',
+      costOngkirShow: false,
+      showButtonBuatPesanan: true,
+      selectAll(event) {
+        const isChecked = event.target.checked;
+        this.cart.forEach((item) => (item.checked = isChecked))
+        this.showButtonBuatPesanan = this.cart.every(item => item.checked === false)
+        this.saveCart()
+      },
+      updateItem(id, event) {
+        this.cart.forEach((item) => {
+              if (item.id === id){
+                item.checked = event.target.checked;
+              }
+        })
+        this.showButtonBuatPesanan = this.cart.every(item => item.checked === false)
+      },
+      init() {
+        this.customerId
+        this.$watch('cart.length', (newValue) => {
+          this.getCartLength(newValue)
+        })
+
+        // This code will be executed before Alpine
+        // initializes the rest of the component.
+        const cartData = localStorage.getItem('cart');
+        if (cartData) {
+          this.cart = JSON.parse(cartData);
+        }
+        const cartSelected = localStorage.getItem('cartSelected');
+        if (cartSelected) {
+          this.cartSelected = JSON.parse(cartSelected);
+        }
+
+      },
+      buatPesanan(){
+        this.loading = true
+        this.cart.forEach(itemSelected => {
+          if (itemSelected.checked === true) {
+            this.addCartSelected(itemSelected)
+          }
+        })
+        let cartItems = this.cart.filter(itemCart => itemCart.checked === false)
+        this.updateCart(cartItems)
+        window.location.href = '/dashboard/checkout';
+      },
+      redirect() {
+        // Replace the URL below with the desired destination
+        window.location.href = '/';
+      },
+
+      getCartLength(newValue) {
+        this.getLen = newValue
+      },
+
+      // Function to calculate the total price of the shopping cart
+      calculateTotal() {
+        let total = 0;
+        for (let i = 0; i < this.cart.length; i++) {
+          if (this.cart[i].checked === true){
+            total += this.cart[i].price * this.cart[i].quantity;
+          }
+        }
+
+        return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+      },
+      calculateTotalForForm() {
+        let total = 0;
+        for (let i = 0; i < this.cart.length; i++) {
+          total += this.cart[i].price * this.cart[i].quantity;
+        }
+
+        return total; // Menampilkan total dengan format rupiah
+      },
+      calculateSubTotal() {
+        let subTotal = 0;
+        for (let i = 0; i < this.cart.length; i++) {
+          subTotal += this.cart[i].price * this.cart[i].quantity;
+        }
+        return "Rp " + subTotal.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+      },
+
+      addCartSelected(itemSelected){
+        this.cartSelected.push(itemSelected);
+        this.saveCartSelected();
+      },
+
+      // Function to remove an item from the shopping cart based on its index
+      removeFromCart(index) {
+        this.cart.splice(index, 1);
+        this.saveCart();
+      },
+
+      // Function to save the cart data to local storage
+      saveCart() {
+        localStorage.setItem('cart', JSON.stringify(this.cart));
+      },
+      updateCart(cartItems) {
+        localStorage.setItem('cart', JSON.stringify(cartItems));
+      },
+      saveCartSelected() {
+        localStorage.setItem('cartSelected', JSON.stringify(this.cartSelected));
+      },
+      $watch: {
+        cart: function () {
+          localStorage.setItem('cart', JSON.stringify(this.cart));
+        }
+      },
+    }))
+  });
+</script>

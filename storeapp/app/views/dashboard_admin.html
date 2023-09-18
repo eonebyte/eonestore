@@ -1,0 +1,113 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div class="container">
+
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header border-bottom-0 position-relative p-3 pt-2">
+                        <div class="position-absolute top-25% left-25% bg-info p-1 text-white shadow-4" style="transform: translate(50px, -30px); border-radius: 5px;"><i class="far fa-circle-user fa-2x fa-fw"></i></div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Today's Users</p>
+                            <h4 class="mb-0">{{.countUser}}</h4>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small>Jumlah pengguna dengan role <strong>User</strong></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header border-bottom-0 position-relative p-3 pt-2">
+                        <div class="position-absolute top-25% left-25% bg-success p-1 text-white shadow-4" style="transform: translate(50px, -30px); border-radius: 5px;"><i class="fas fa-dollar-sign fa-2x fa-fw"></i></div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Revenue</p>
+                            <h4 class="mb-0">{{.totalRevenue}}</h4>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small>Total pendapatan dari order status <strong>Settlement/Sudah Bayar</strong></small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <div class="card-header border-bottom-0 position-relative p-3 pt-2">
+                        <div class="position-absolute top-25% left-25% bg-primary p-1 text-white shadow-4" style="transform: translate(50px, -30px); border-radius: 5px;"><i class="fas fa-cart-flatbed fa-2x fa-fw"></i></div>
+                        <div class="text-end pt-1">
+                            <p class="text-sm mb-0 text-capitalize">Sales</p>
+                            <h4 class="mb-0">{{.totalSales}}</h4>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <small>Total penjualan dari item dengan status order <strong>Settlement/Sudah Bayar</strong></small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="row">
+            <div class="col-md-12 mb-4 text-center">
+                <h3>Riwayat Transaksi</h3>
+                <hr>
+                <div class="table-responsive-xl">
+                    <table id="dataTableDasboardAdmin" class="table table-bordered border-dark table-hover text-nowrap">
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">No. Order</th>
+                                <th scope="col">Total Amount</th>
+                                <th scope="col">Status Order</th>
+                                <th scope="col">Status Shipping</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range $index, $order := .orders}}
+                            <tr>
+                                <th scope="row">{{ addIndex $index 1 }}</th>
+                                <td>{{$order.OrderNo}}</td>
+                                <td>{{$order.TotalAmountString}}</td>
+                                <td>
+                                    {{ if eq $order.OrderStatus "pending"}}
+                                    <span class="badge rounded-pill badge-primary">{{$order.OrderStatus}}</span>
+                                    {{ end }}
+                                    {{ if eq $order.OrderStatus "settlement"}}
+                                    <span class="badge rounded-pill badge-success">{{$order.OrderStatus}}</span>
+                                    {{ end }}
+                                </td>
+                                <td>
+                                    {{ if eq $order.OrderStatus "settlement"}}
+                                    {{ if eq $order.ShippingStatus "unshipping"}}
+                                    <span class="badge rounded-pill badge-warning">{{$order.ShippingStatus}}</span>
+                                    {{ end }}
+                                    {{ if eq $order.ShippingStatus "shipping"}}
+                                    <span class="badge rounded-pill badge-primary">{{$order.ShippingStatus}}</span>
+                                    {{ end }}
+                                    {{ if eq $order.ShippingStatus "accepted"}}
+                                    <span class="badge rounded-pill badge-success">{{$order.ShippingStatus}}</span>
+                                    {{ end }}
+                                    {{ end }}
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function () {
+        $("#dataTableDasboardAdmin").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+    })
+</script>

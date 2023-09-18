@@ -1,0 +1,276 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="products" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Products</h3>
+                <hr>
+                <!--Create Category-->
+                <button type="button" class="btn btn-primary mb-4" data-mdb-toggle="modal"
+                    data-mdb-target="#createItem"><i class="fa fa-plus"></i></button>
+                <!-- End Create Category-->
+                <div class="table-responsive-xl">
+                    <table id="dataTableItem" class="table table-hover w-100">
+                        <thead>
+                            <tr>
+                                <th scope="col">No.</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Image</th>
+                                <th scope="col">Original Price</th>
+                                <th scope="col">Final Price</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col" class="w-25">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range $index, $item := .items}}
+                            <tr>
+                                <th scope="row">{{ addIndex $index 1 }}</th>
+                                <td>{{$item.Name}}</td>
+                                <td>{{$item.Category.Name}}</td>
+                                <td>
+                                    <img src="/img/items/{{$item.Image}}" width="100px;">
+                                </td>
+                                <td>{{$item.OriginalPriceString}}</td>
+                                <td>{{$item.FinalPriceString}}</td>
+                                <td>{{$item.Stock}}</td>
+                                <td>
+                                    <!--Edit Category-->
+                                    <button type="button" data-id="{{$item.ID}}" data-name="{{$item.Name}}"
+                                        data-original_price="{{$item.OriginalPrice}}"  data-final_price="{{$item.FinalPrice}}" data-stock="{{$item.Stock}}"
+                                        data-desc="{{$item.Description}}" class="btn btn-info buttonEditItem"><i
+                                            class="far fa-pen-to-square"></i></button>
+                                    <!--Delete Category-->
+                                    <button type="button" data-id="{{$item.ID}}"
+                                        class="btn btn-danger buttonDeleteItem"><i
+                                            class="far fa-trash-can"></i></button>
+
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Create Category -->
+        <div class="modal fade" id="createItem" tabindex="-1" aria-labelledby="createItemLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createItemLabel">Add Product</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="create-item" method="post" action="/dashboard/create_item"
+                            enctype="multipart/form-data">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control" id="product-name" required>
+                                <label for="product-name" class="form-label">Name</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="original_price" class="form-control price" id="product-edit-original_price"
+                                    required>
+                                <label for="product-edit-original_price" class="form-label">Original Price</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="final_price" class="form-control price" id="product-edit-final_price"
+                                    required>
+                                <label for="product-edit-final_price" class="form-label">Final Price</label>
+                            </div>
+                            <label for="category" class="form-label">Category :</label><br>
+
+                            <select id="category" name="category_id" class="browser-default custom-select mb-4">
+                                <option selected>Select Category :</option>
+                                {{range $index, $category := .categories}}
+                                <option value="{{$category.ID}}">{{$category.Name}}</option>
+                                {{end}}
+                            </select>
+                            <br>
+                            <label for="product-image">Image</label>
+                            <div class="form-outline mb-4">
+                                <input type="file" name="image" class="form-control" id="product-image" required>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <textarea name="description" id="product-description" class="form-control"
+                                    rows="3"></textarea>
+                                <label for="product-description" class="form-label">Description</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="stock" class="form-control" id="stock" required>
+                                <label for="stock" class="form-label">Stock</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="createItem" type="button" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Create Category-->
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="editItem" tabindex="-1" aria-labelledby="createItemLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editItemLabel">Update Product</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="update-item" method="post" action="/dashboard/update_item"
+                            enctype="multipart/form-data">
+                            <input type="hidden" name="id" class="id">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control name" id="product-edit-name"
+                                    required>
+                                <label for="product-edit-name" class="form-label">Name</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="original_price" class="form-control original_price" id="product-edit-original_price"
+                                    required>
+                                <label for="product-edit-original_price" class="form-label">Original Price</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="final_price" class="form-control final_price" id="product-edit-final_price"
+                                    required>
+                                <label for="product-edit-final_price" class="form-label">Final Price</label>
+                            </div>
+                            <label for="category" class="form-label">Category :</label><br>
+
+                            <select id="category" name="category_id" class="browser-default custom-select mb-4">
+                                <option selected value="">Select Category :</option>
+                                {{range $index, $category := .categories}}
+                                <option value="{{$category.ID}}">{{$category.Name}}</option>
+                                {{end}}
+                            </select>
+                            <br>
+                            <label for="product-image">Image</label>
+                            <div class="form-outline mb-4">
+                                <input type="file" name="image" class="form-control" id="product-edit-image" required>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <textarea name="description" id="product-edit-description" class="form-control desc"
+                                    rows="3"></textarea>
+                                <label for="product-edit-description" class="form-label description">Description</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="stock" class="form-control stock" id="edit-stock" required>
+                                <label for="edit-stock" class="form-label">Stock</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="updateItem" type="button" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Edit Category-->
+
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDeleteItem" tabindex="-1" role="dialog"
+            aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-item" method="post" action="/dashboard/delete_item">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deteleItem" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function () {
+        $("#dataTableItem").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+        $('#dataTableItem').on('click', '.buttonEditItem', function () {
+            let id = $(this).data("id")
+            let name = $(this).data("name")
+            let original_price = $(this).data("original_price")
+            let final_price = $(this).data("final_price")
+            let stock = $(this).data("stock")
+            let desc = $(this).data("desc")
+
+            $("#editItem").modal("show");
+            $(".id").val(id)
+            $(".name").val(name)
+            $(".original_price").val(original_price)
+            $(".final_price").val(final_price)
+            $(".stock").val(stock)
+            $(".desc").val(desc)
+        });
+        $('#dataTableItem').on('click', '.buttonDeleteItem', function () {
+            let id = $(this).data("id")
+
+            $("#modalConfirmDeleteItem").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('products', () => ({
+            formCreate: document.getElementById('create-item'),
+            formUpdate: document.getElementById('update-item'),
+            formDelete: document.getElementById('delete-item'),
+            loading: false,
+            deteleItem() {
+                this.formDelete.submit();
+                this.loading = true
+            },
+            updateItem() {
+                this.alert_update()
+            },
+            createItem() {
+                this.alert_create()
+            },
+            alert_create() {
+                if (!confirm("Tambahkan product baru ?")) {
+                    return false;
+                }
+                this.formCreate.submit();
+                this.loading = true
+            },
+            alert_update() {
+                if (!confirm("Update product ?")) {
+                    return false;
+                }
+                this.formUpdate.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>

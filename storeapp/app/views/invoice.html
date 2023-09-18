@@ -1,0 +1,58 @@
+
+  <div x-data="notifikasiData" class="container">
+    <div class="row">
+      <div class="col-md-12 mb-4 mt-4">
+        <h3>Invoice</h3>
+        <hr>
+
+
+        <div class="card">
+          <div class="card-body mx-4">
+            <div class="container">
+              <p class="my-5 mx-5" style="font-size: 30px;">Thank for your purchase</p>
+
+              <div class="row">
+                <ul class="list-unstyled">
+                  <li class="text-black">{{.Customer}}</li>
+                  <li class="text-muted mt-1"><span class="text-black">Invoice : </span>{{.OrderNo}}</li>
+                  <li class="text-black mt-1">{{.Date}}</li>
+                  {{if eq .OrderStatus "pending"}}
+                  <li class="text-black mt-1"><span class="text-black">Status : </span><span class="badge bg-info text-white fw-bold">Unpaid</span></li>
+                  {{end}}
+                  {{if eq .OrderStatus "settlement"}}
+                  <li class="text-black mt-1"><span class="text-black">Status : </span><span class="badge bg-success text-white fw-bold">Paid</span></li>
+                  {{end}}
+
+                </ul>
+                <hr>
+              </div>
+              {{range $index, $elem := .Items}}
+              <div class="row">
+                <div class="col-xl-10">
+                  <p>{{$elem.Name}}</p>
+                </div>
+                <div class="col-xl-2">
+                  <p class="float-end">Qty : {{$elem.Quantity}} | Total : <span id="subtotal">{{$elem.SubTotal}}</span></p>
+                </div>
+                <hr>,
+              </div>
+              {{end}}
+
+              <div class="row text-black">
+
+                <div class="col-xl-12">
+                  <p class="float-end fw-bold">Sub Total: {{.SubTotal}} <br> Ongkir: {{.CostOngkir}} <br>Grand Total: {{.GrandTotal}}</p>
+                </div>
+                <hr style="border: 2px solid black;">
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+

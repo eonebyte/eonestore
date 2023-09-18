@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <title>{{.setting.AppName}}</title>
+    <!-- MDB icon -->
+    <link rel="icon" href="/img/mylogo.png" type="image/x-icon" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/css/all.min.css" />
+    <link rel="stylesheet" href="/css/mdb.min.css">
+    <script src="/js/alpine.min.js" defer></script>
+</head>
+<style>
+    .truncated-txt{
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block!important;
+        @media (max-width: 767px) {
+            max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block!important;
+            
+        }
+    }
+    .custom-text {
+        font-size: 28px;
+        font-size: large;
+        font-weight: bold;
+        text-align: center;
+        
+
+        /* You can adjust this value */
+        /* Customize text size for mobile */
+        @media (max-width: 767px) {
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+    .custom-text-carousel {
+        font-size: 38px;
+        font-weight: bold;
+        text-align: center;
+
+        /* You can adjust this value */
+        /* Customize text size for mobile */
+        @media (max-width: 767px) {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+    }
+    .carousel-caption-custom {
+        position: absolute;
+    right: 15%;
+    bottom: 1.25rem;
+    left: 15%;
+    padding-top: 2.25rem;
+    padding-bottom: 1.25rem;
+    color: #fff;
+    text-align: center;
+
+        /* You can adjust this value */
+        /* Customize text size for mobile */
+        @media (max-width: 767px) {
+            position: absolute;
+    right: 15%;
+    bottom: 1.25rem;
+    left: 15%;
+    color: #fff;
+    text-align: center;
+    font-size: 10px;
+    top: 10%;
+        }
+    }
+    .custom-category {
+        font-size: 28px;
+        font-size: medium;
+        text-align: center;
+
+        /* You can adjust this value */
+        /* Customize text size for mobile */
+        @media (max-width: 767px) {
+            font-size: 14px;
+            text-align: center;
+        }
+    }
+
+
+    .img-item {
+        width: 100%;
+        @media (max-width: 767px) {
+            width: 50%;
+        }
+    }
+
+    .carousel-item {
+        height: 50vh;
+
+        /* Media query for mobile devices */
+        @media (max-width: 767px) {
+            height: auto;
+            /* Set height to auto for mobile devices */
+        }
+    }
+
+    .card {
+        box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    }
+
+    .footer-cta {
+        box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px;
+    }
+
+    .price {
+        color: #263238;
+        font-size: 24px;
+    }
+
+    .card-title {
+        color: #263238
+    }
+
+    .sale {
+        color: #E53935
+    }
+
+    .sale-badge {
+        background-color: #E53935
+    }
+</style>
+
+<body>
+
+    {{embed}}
+
+    <script src="/js/mdb.min.js"></script>
+</body>
+
+</html>

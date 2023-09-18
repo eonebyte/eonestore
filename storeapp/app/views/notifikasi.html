@@ -1,0 +1,70 @@
+{{template "partials/header_admin" .sessionData}}
+
+<main class="mt-5 pt-4">
+<div x-data="notifikasiData" class="container">
+    <div class="row">
+      <div class="col-md-12 mb4">
+        <h3>Halaman Notifikasi</h3>
+
+        <div class="card">
+          <div class="card-body mx-4">
+            <div class="container">
+              <p class="my-5 mx-5" style="font-size: 30px;">Thank for your purchase</p>
+
+              <div class="row">
+                <ul class="list-unstyled">
+                  <li class="text-black">{{.user.Name}}</li>
+                  <li class="text-muted mt-1"><span class="text-black">Invoice : </span>{{.order.OrderNo}}</li>
+                  <li class="text-black mt-1">{{.order_date}}</li>
+                  {{if eq .order.OrderStatus "pending"}}
+                  <li class="text-black mt-1"><span class="text-black">Status : </span><span class="badge bg-info text-white fw-bold">Unpaid</span></li>
+                  <small>Jika status pembayaran kosong / belum berubah, silahkan refresh halaman !</small>
+                  {{end}}
+                  {{if eq .order.OrderStatus "settlement"}}
+                  <li class="text-black mt-1"><span class="text-black">Status : </span><span class="badge bg-success text-white fw-bold">Paid</span></li>
+                  {{end}}
+
+                </ul>
+                <hr>
+              </div>
+              {{range $index, $elem := .order.Items}}
+              <div class="row">
+                <div class="col-xl-10">
+                  <p>{{$elem.Name}}</p>
+                </div>
+                <div class="col-xl-2">
+                  <p class="float-end">Qty : {{$elem.Quantity}} | Total : <span id="subtotal">{{$elem.SubTotal}}</span></p>
+                </div>
+                <hr>,
+              </div>
+              {{end}}
+
+              <div class="row text-black">
+
+                <div class="col-xl-12">
+                  <p class="float-end fw-bold">Sub Total: {{.sub_total}} <br> Ongkir: {{.cost_ongkir}} <br>Grand Total: {{.grand_total}}</p>
+                </div>
+                <hr style="border: 2px solid black;">
+              </div>
+              <div class="text-center" style="margin-top: 90px;">
+                <a href="/dashboard/orders"><u class="text-info">Lihat semua pesanan</u></a>
+<!--                <p>Segera </p>-->
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+</div>
+</main>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('notifikasiData', () => ({
+    }))
+  });
+</script>
+</script>
+

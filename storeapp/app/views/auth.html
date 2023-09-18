@@ -1,0 +1,267 @@
+{{template "partials/header" .sessionData}}
+<br/><br/>
+<div x-data="cartStore" class="container">
+    <!-- Modal Cart -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="exampleSideModal1">Product in the cart</h5>
+                    <button type="button" class="btn-close btn-close-white" data-mdb-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <div x-show="cart.length > 0">
+                                <ol class="list-group list-group-light list-group-numbered">
+                                    <template x-for="(item, index) in cart">
+                                        <li class="list-group-item">
+                                            <div class="row">
+                                                <div class="col-md-10">
+                                                    <img :src="item.image" width="100" class="img-fluid" alt="" />
+                                                    <span x-text="item.name"></span>
+                                                    &nbsp; :
+                                                    <span>Rp. <span x-text="item.price"></span></span>
+                                                </div>
+                                                <div class="col-auto d-flex align-items-center">
+                                                    <button class="btn btn-danger align-self-center" @click="removeFromCart(index)">Hapus</button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </template>
+                                </ol>
+                                <p class="fs-3">Total: <span x-text="calculateTotal()"></span></p>
+                            </div>
+                            <div x-show="cart.length === 0">
+                                <p>Keranjang belanja kosong.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="/auth" type="button" class="btn btn-info">Go to the cart</a>
+                    <button type="button" class="btn btn-outline-info" data-mdb-dismiss="modal">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Modal Cart -->
+
+    <div x-data="{ activeTab:  0 }" class="row mt-lg-5">
+        <div class="col-md-12 mt-lg-5">
+            {{if ne .message ""}}
+            <div class="alert alert-danger" role="alert" data-mdb-color="danger">
+                {{.message}}
+            </div>
+            {{end}}
+            <!-- Pills navs -->
+            <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a @click="activeTab = 0" :class="{ 'active': activeTab === 0 }" class="nav-link" id="tab-login" data-mdb-toggle="pill" href="#pills-login" role="tab"
+                       aria-controls="pills-login" aria-selected="true">Login</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a @click="activeTab = 1" :class="{ 'active': activeTab === 1 }" class="nav-link" id="tab-register" data-mdb-toggle="pill" href="#pills-register" role="tab"
+                       aria-controls="pills-register" aria-selected="false">Register</a>
+                </li>
+            </ul>
+            <!-- Pills navs -->
+
+            <!-- Pills content -->
+            <div class="tab-content">
+                <div x-show="activeTab === 0" class="card">
+                    <div class="card-body">
+                        <div class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
+                            <form method="post" action="/auth/login_post">
+                                
+                                <div class="text-center mb-3">
+                                    <p class="fs-4">Login : </p>
+                                    <small><strong>Admin</strong> </small><br>
+                                    <small>username: ahfari99</small><br>
+                                    <small>password: admin123456</small><br>
+                                    <small><strong>User</strong> </small><br>
+                                    <small>username: john123</small><br>
+                                    <small>password: user123456</small>
+                                </div>
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input name="username" type="text" id="loginName" class="form-control" />
+                                    <label class="form-label" for="loginName">Email or username</label>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input name="password" type="password" id="loginPassword" class="form-control" />
+                                    <label class="form-label" for="loginPassword">Password</label>
+                                </div>
+
+                                <!-- 2 column grid layout -->
+                                <div class="row mb-4">
+                                    <div class="col-md-6 d-flex justify-content-center">
+                                        <!-- Checkbox -->
+                                        <div class="form-check mb-3 mb-md-0">
+                                            <input class="form-check-input" type="checkbox" value="" id="loginCheck" checked />
+                                            <label class="form-check-label" for="loginCheck"> Remember me </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6 d-flex justify-content-center">
+                                        <!-- Simple link -->
+                                        <a href="#!">Forgot password?</a>
+                                    </div>
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+                                <!-- Register buttons -->
+                                <div class="text-center">
+                                    <p>Belum punya akun? <a @click="activeTab = 1" href="#!">Register</a></p>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div x-show="activeTab === 1" class="card">
+                    <div class="card-body">
+                        <div class="tab-pane fade show active" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
+                            <form method="post" action="/auth/register_post">
+                                <div class="text-center mb-3">
+                                    <p class="fs-4">Register :</p>
+                                </div>
+
+                                <!-- Name input -->
+                                <div class="form-outline mb-4">
+                                    <input name="name" type="text" id="registerName" class="form-control" />
+                                    <label class="form-label" for="registerName">Name</label>
+                                </div>
+
+                                <!-- Username input -->
+                                <div class="form-outline mb-4">
+                                    <input name="username" type="text" id="registerUsername" class="form-control" required/>
+                                    <label class="form-label" for="registerUsername">Username</label>
+                                </div>
+
+                                <!-- Role-->
+                                <input type="hidden" name="role" value="user">
+
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input name="email" type="email" id="registerEmail" class="form-control" required />
+                                    <label class="form-label" for="registerEmail">Email</label>
+                                </div>
+
+                                <!-- Phone input -->
+                                <div class="form-outline mb-4">
+                                    <input name="phone" type="text" id="regPhone" class="form-control" required />
+                                    <label class="form-label" for="regPhone">No. HP / WA</label>
+                                </div>
+
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input name="password" type="password" id="password" class="form-control" required />
+                                    <label class="form-label" for="password">Password</label>
+                                </div>
+
+                                <!-- Repeat Password input -->
+                                <div class="form-outline mb-4">
+                                    <input name="password" type="password" id="confirm_password" class="form-control" />
+                                    <label class="form-label" for="confirm_password">Confirm password</label>
+                                </div>
+
+                                <!-- Checkbox -->
+                                <div class="form-check d-flex justify-content-center mb-4">
+                                    <input required class="form-check-input me-2" type="checkbox" value="" id="registerCheck" checked
+                                           aria-describedby="registerCheckHelpText" />
+                                    <label class="form-check-label" for="registerCheck">
+                                        I have read and agree to the terms
+                                    </label>
+                                </div>
+
+                                <!-- Submit button -->
+                                <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Pills content -->
+        </div>
+    </div>
+</div>
+{{template "partials/footer" .sessionData}}
+<script>
+    var password = document.getElementById("password")
+        , confirm_password = document.getElementById("confirm_password");
+
+    function validatePassword(){
+        if(password.value != confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('cartStore', () => ({
+            cart: [], // Array to store shopping cart items
+            getLen: 0,
+
+            init() {
+                this.$watch('cart.length', (newValue, oldValue) => {
+                    this.getCartLength(newValue)
+                    console.log('Nilai data reaktif open berubah: ', newValue, 'dari', oldValue);
+
+                })
+                // This code will be executed before Alpine
+                // initializes the rest of the component.
+                const cartData = localStorage.getItem('cart');
+                if (cartData) {
+                    this.cart = JSON.parse(cartData);
+                }
+            },
+
+
+            getCartLength(newValue) {
+                this.getLen = newValue
+            },
+
+            // Function to calculate the total price of the shopping cart
+            calculateTotal() {
+                let total = 0;
+                for (let i = 0; i < this.cart.length; i++) {
+                    total += this.cart[i].price;
+                }
+                return "Rp " + total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+
+            // Function to remove an item from the shopping cart based on its index
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+                this.saveCart();
+                this.updateCart();
+            },
+
+            // Function to save the cart data to local storage
+            saveCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+
+
+            updateCart() {
+                localStorage.setItem('cart', JSON.stringify(this.cart));
+            },
+            $watch: {
+                cart: function () {
+                    localStorage.setItem('cart', JSON.stringify(this.cart));
+                }
+            }
+
+        }))
+    });
+</script>

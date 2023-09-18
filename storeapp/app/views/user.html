@@ -1,0 +1,173 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="users" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Users</h3>
+                <hr>
+
+                <div class="table-responsive-xl">
+                    <table id="dataTableUser" class="table table-hover w-100">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col" class="w-25">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $index, $user := .users}}
+                        <tr>
+                            <th scope="row">{{ addIndex $index 1 }}</th>
+                            <td>{{$user.Name}}</td>
+                            <td>{{$user.Email}}</td>
+                            <td>{{$user.Role}}</td>
+                            <td>{{$user.Phone}}</td>
+                            <td>
+                                <!--Edit Category-->
+                                <button type="button" data-id="{{$user.Id}}" data-name="{{$user.Name}}" data-email="{{$user.Email}}" data-role="{{$user.Role}}" data-phone="{{$user.Phone}}" class="btn btn-info buttonEditUser"><i class="far fa-pen-to-square"></i></button>
+                                <!--Delete Category-->
+                                <button type="button" data-id="{{$user.Id}}" class="btn btn-danger buttonDeleteUser"><i class="far fa-trash-can"></i></button>
+
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="editUser" tabindex="-1" aria-labelledby="editUserLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editItemLabel">Update Product</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="update-user" method="post" action="/dashboard/update_user" enctype="multipart/form-data">
+                            <input type="hidden" name="id" class="id">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control name" id="user-edit-name" required>
+                                <label for="user-edit-name" class="form-label">Name</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="email" name="email" class="form-control email" id="user-edit-email" required>
+                                <label for="user-edit-email" class="form-label">Price</label>
+                            </div>
+                            <label for="user-image">Image</label>
+                            <div class="form-outline mb-4">
+                                <input type="file" name="image" class="form-control" id="user-image" required>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="text" disabled name="role" class="form-control role" id="edit-role" required>
+                                <label for="edit-role" class="form-label">Role</label>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <input type="number" name="phone" class="form-control phone" id="edit-phone" required>
+                                <label for="edit-phone" class="form-label">Phone</label>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="updateUser" type="button" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Edit Category-->
+
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDeleteUser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-user" method="post" action="/dashboard/delete_user">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deteleUser" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $("#dataTableUser").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+        $('#dataTableUser').on('click', '.buttonEditUser', function (){
+            let id = $(this).data("id")
+            let name = $(this).data("name")
+            let email = $(this).data("email")
+            let role = $(this).data("role")
+            let phone = $(this).data("phone")
+
+            $("#editUser").modal("show");
+            $(".id").val(id)
+            $(".name").val(name)
+            $(".email").val(email)
+            $(".role").val(role)
+            $(".phone").val(phone)
+        });
+        $('#dataTableUser').on('click', '.buttonDeleteUser', function (){
+            let id = $(this).data("id")
+
+            $("#modalConfirmDeleteUser").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('users', () => ({
+            formUpdate: document.getElementById('update-user'),
+            formDelete: document.getElementById('delete-user'),
+            loading: false,
+            deteleUser(){
+                this.formDelete.submit();
+                this.loading = true
+            },
+            updateUser(){
+                this.alert_update()
+            },
+            alert_update() {
+                if(!confirm("Update product ?")) {
+                    return false;
+                }
+                this.formUpdate.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>
+
+

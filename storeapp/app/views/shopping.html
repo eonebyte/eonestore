@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping Cart with Alpine.js</title>
+  <link rel="stylesheet" href="styles.css">
+<!--  <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js"></script>-->
+  <script src="//unpkg.com/alpinejs" defer></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    h1, h2 {
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px;
+      border: 1px solid #ccc;
+      margin-bottom: 5px;
+    }
+
+    button {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+  </style>
+
+</head>
+<body>
+<div class="container" x-data>
+  <h1>Shopping Cart</h1>
+  <div>
+    <h2>Products</h2>
+    <ul>
+      <template x-for="product in $store.shoppingCart.products" :key="product.id">
+      <li>
+        <span x-text="product.name"></span>
+        <span>$<span x-text="product.price"></span></span>
+        <button @click="$store.shoppingCart.addToCart(product)">Add to Cart</button>
+      </li>
+      </template>
+    </ul>
+  </div>
+  <div>
+    <h2>Cart</h2>
+    <ul x-show="$store.shoppingCart.cart.length > 0">
+      <template x-for="item in $store.shoppingCart.cart" :key="item.id">
+      <li>
+        <span x-text="item.name"></span>
+        <span>$<span x-text="item.price"></span></span>
+        <button @click="$store.shoppingCart.removeFromCart(item)">Remove</button>
+      </li>
+      </template>
+    </ul>
+    <p x-show="$store.shoppingCart.cart.length === 0">Your cart is empty.</p>
+    <p>Total: $<span x-text="$store.shoppingCart.calculateTotal()"></span></p>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('alpine:initialized', () => {
+    Alpine.store('shoppingCart', {
+      products: [
+        { id: 1, name: 'Product 1', price: 10 },
+        { id: 2, name: 'Product 2', price: 15 },
+        { id: 3, name: 'Product 3', price: 20 },
+      ],
+      cart: [],
+      addToCart(product) {
+        this.cart.push(product);
+      },
+      removeFromCart(item) {
+        const index = this.cart.indexOf(item);
+        if (index !== -1) {
+          this.cart.splice(index, 1);
+        }
+      },
+      calculateTotal() {
+        return this.cart.reduce((total, item) => total + item.price, 0);
+      },
+
+    })
+  })
+</script>
+</body>
+</html>

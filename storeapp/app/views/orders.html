@@ -1,0 +1,344 @@
+{{template "partials/header_admin" .sessionData}}
+
+
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="orderState" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Pesanan Saya</h3>
+                <!-- Tabs navs -->
+                <ul class="nav nav-tabs mb-3" id="ex-with-icons" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="ex-with-icons-tab-1" data-mdb-toggle="tab" href="#ex-with-icons-tabs-1" role="tab"
+                           aria-controls="ex-with-icons-tabs-1" aria-selected="true"><i class="fas fa-wallet fa-fw me-2"></i>Belum Bayar</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-2" data-mdb-toggle="tab" href="#ex-with-icons-tabs-2" role="tab"
+                           aria-controls="ex-with-icons-tabs-2" aria-selected="false"><i class="fas fa-truck-ramp-box a-fw me-2"></i>Dikemas</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-3" data-mdb-toggle="tab" href="#ex-with-icons-tabs-3" role="tab"
+                           aria-controls="ex-with-icons-tabs-3" aria-selected="false"><i class="fas fa-truck fa-fw me-2"></i>Dikirim</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-4" data-mdb-toggle="tab" href="#ex-with-icons-tabs-4" role="tab"
+                           aria-controls="ex-with-icons-tabs-4" aria-selected="false"><i class="far fa-circle-check fa-fw me-2"></i>Selesai</a>
+                    </li>
+                </ul>
+                <!-- Tabs navs -->
+                <hr>
+                <!-- Tabs content -->
+                <div class="tab-content" id="ex-with-icons-content">
+                    <div class="tab-pane fade show active" id="ex-with-icons-tabs-1" role="tabpanel" aria-labelledby="ex-with-icons-tab-1">
+<!--                        List Items -->
+
+                        {{range $index, $order := .orders}}
+                        {{if eq $order.OrderStatus "pending"}}
+                        <ul class="list-group mb-3">
+
+                            {{range $index, $item := $order.Items}}
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-10">
+                                            <img src="/img/items/{{$item.Image}}" width="100" class="img-fluid" alt="" />
+                                            <span>{{$item.Name}}</span>
+                                            <br>
+                                            <span>Harga Satuan : Rp. {{$item.Price}}</span>
+                                            <br>
+                                            <span>Quantity : {{$item.Quantity}}</span>
+                                            <br>
+                                            <span>Jumlah Harga : {{$item.SubTotal}}</span>
+                                        </div>
+                                    </div>
+                                </li>
+                            {{end}}
+
+                            <div x-show="itemLengthBelumBayar > 0">
+                                <li class="list-group-item">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <ul>
+                                                <li><span>SubTotal (IDR) : <strong>{{$order.SubTotalString}}</strong></span></li>
+                                                <li><span>Ongkir (IDR) : <strong>{{$order.CostOngkirString}}</strong></span></li>
+                                                <li><span>Total (IDR) : <strong>{{$order.TotalAmountString}}</strong></span></li>
+                                            </ul>
+                                        </div>
+                                        <div class="col-md-6 d-flex align-items-center">
+                                            <button @click="bayarSekarang('{{$order.OrderNo}}')" class="btn btn-primary">Bayar Sekarang</button>
+                                        </div>
+                                    </div>
+                                </li>
+                            </div>
+
+                        </ul>
+                        {{end}}
+                        {{end}}
+
+                        <!--Grid row-->
+                        <div class="row">
+                            <div class="col-md-12 mb-4 text-center">
+                                <button x-show="!showButtonBuy" :disabled="showButtonBuy" type="button" class="btn btn-primary" data-mdb-toggle="modal" data-mdb-target="#submitModal">Checkout</button>
+                            </div>
+                        </div>
+                        <!-- Modal Submit -->
+                        <div class="modal fade" id="submitModal" tabindex="-1" aria-labelledby="submitModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pembelian</h5>
+                                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                                        <button @click="toCheckout()" type="button" class="btn btn-primary">Lanjut ke pembayaran</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--  End Modal Submit-->
+
+                        <div x-show="itemLengthBelumBayar <= 0" class="text-center">
+                            <h4>Belum ada pesanan</h4>
+                            Silahkan <a href="/">Klik di sini untuk memilih produk</a>
+                        </div>
+<!--                        End List Items-->
+                    </div>
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-2" role="tabpanel" aria-labelledby="ex-with-icons-tab-2">
+                        <!-- List Items -->
+
+                        <ul class="list-group mb-3">
+                            {{range $index, $order := .orders}}
+                            {{if eq $order.OrderStatus "settlement"}}
+                            {{if eq $order.ShippingStatus "unshipping"}}
+                            {{range $index, $elem := $order.Items}}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <img src="/img/items/{{$elem.Image}}" width="100" class="img-fluid" alt="" />
+                                        <span>{{$elem.Name}}</span>
+                                        <br>
+                                        <span>Harga Satuan : Rp. {{$elem.Price}}</span>
+                                        <br>
+                                        <span>Quantity : {{$elem.Quantity}}</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            <li><span>SubTotal (IDR) : <strong>{{$order.SubTotalString}}</strong></span></li>
+                                            <li><span>Ongkir (IDR) : <strong>{{$order.CostOngkirString}}</strong></span></li>
+                                            <li><span>Total (IDR) : <strong>{{$order.TotalAmountString}}</strong></span></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                        </ul>
+
+                        <div x-show="lengthDikemas <= 0" class="text-center">
+                            <h4>Belum ada </h4>
+                            Silahkan <a href="/">Klik di sini untuk memilih produk</a>
+                        </div>
+
+                        <!--                        End List Items-->
+                    </div>
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-3" role="tabpanel" aria-labelledby="ex-with-icons-tab-3">
+                        <!-- List Items -->
+
+                        <ul class="list-group mb-3">
+                            {{range $index, $order := .orders}}
+                            {{if eq $order.OrderStatus "settlement"}}
+                            {{if eq $order.ShippingStatus "shipping"}}
+                            {{range $index, $elem := $order.Items}}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <img src="/img/items/{{$elem.Image}}" width="100" class="img-fluid" alt="" />
+                                        <span>{{$elem.Name}}</span>
+                                        <br>
+                                        <span>Harga Satuan : Rp. {{$elem.Price}}</span>
+                                        <br>
+                                        <span>Quantity : {{$elem.Quantity}}</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            <li><span>SubTotal (IDR) : <strong>{{$order.SubTotalString}}</strong></span></li>
+                                            <li><span>Ongkir (IDR) : <strong>{{$order.CostOngkirString}}</strong></span></li>
+                                            <li><span>Total (IDR) : <strong>{{$order.TotalAmountString}}</strong></span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-center">
+                                        <ul>
+                                            <li>
+                                                <h5>{{$order.Courier}}</h5>
+                                            </li>
+                                            <li>
+                                                <h5>No. Resi : <span class="badge badge-primary">{{$order.Shipping.NoResi}}</span></h5>
+                                            </li>
+                                            <li>
+                                                <form method="post" action="/dashboard/update_shipping" enctype="multipart/form-data">
+                                                    <input type="hidden" name="id" value="{{$order.ID}}" class="id">
+                                                    <input type="hidden" name="user_id" value="{{$order.CustomerId}}" class="id">
+                                                    <input type="hidden" name="status_shipping" value="accepted" class="id">
+                                                    <button type="submit" class="btn btn-info">Konfirmasi barang sudah diterima</button>
+                                                </form>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            <li>
+
+                            </li>
+                        </ul>
+
+                        <div x-show="lengthDikirim <= 0" class="text-center">
+                            <h4>Belum ada </h4>
+                            produk untuk dikirim <a href="/">Klik di sini untuk memilih produk</a>
+                        </div>
+
+                        <!--                        End List Items-->
+                    </div>
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-4" role="tabpanel" aria-labelledby="ex-with-icons-tab-4">
+                        <!-- List Items -->
+
+                        <ul class="list-group mb-3">
+                            {{range $index, $order := .orders}}
+                            {{if eq $order.OrderStatus "settlement"}}
+                            {{if eq $order.ShippingStatus "accepted"}}
+                            {{range $index, $elem := $order.Items}}
+                            <li class="list-group-item">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <img src="/img/items/{{$elem.Image}}" width="100" class="img-fluid" alt="" />
+                                        <span>{{$elem.Name}}</span>
+                                        <br>
+                                        <span>Harga Satuan : Rp. {{$elem.Price}}</span>
+                                        <br>
+                                        <span>Quantity : {{$elem.Quantity}}</span>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <ul>
+                                            <li><span>SubTotal (IDR) : <strong>{{$order.SubTotalString}}</strong></span></li>
+                                            <li><span>Ongkir (IDR) : <strong>{{$order.CostOngkirString}}</strong></span></li>
+                                            <li><span>Total (IDR) : <strong>{{$order.TotalAmountString}}</strong></span></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-center">
+                                        <ul>
+                                            <li>
+                                                <h5>{{$order.Courier}}</h5>
+                                            </li>
+                                            <li>
+                                                <h5>No. Resi : <span class="badge badge-success">{{$order.Shipping.NoResi}}</span></h5>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </li>
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            {{end}}
+                            <li>
+
+                            </li>
+                        </ul>
+
+                        <!--                        End List Items-->
+                    </div>
+                </div>
+                <!-- Tabs content -->
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('orderState', () => ({
+            base_url: "{{.sessionData.Url}}",
+            loading: false,
+            showButtonBuy: true,
+            itemLengthBelumBayar: "{{.item_length_belum_bayar}}",
+            itemLengthSudahBayar: "{{.item_length_sudah_bayar}}",
+            lengthDikirim: "{{.lengthDikirim}}",
+            lengthDikemas: "{{.lengthDikemas}}",
+            async bayarSekarang(orderId){
+                let order = await (await fetch(`${this.base_url}/dashboard/api-notifikasi?order_id=${orderId}`)).json()
+
+                window.snap.pay(`${order.token}`, {
+                    onSuccess: async function (result) {
+                        /* You may add your own implementation here */
+                        alert("payment success!");
+
+                        window.location.href = result.finish_redirect_url
+                    },
+                    onPending: async function (result) {
+                        window.location.href = result.finish_redirect_url
+
+                    },
+                    onError: function (result) {
+                        /* You may add your own implementation here */
+                        alert("payment failed!");
+                        console.log(result)
+                        window.location.href = result.finish_redirect_url
+                    },
+                    onClose: function () {
+                        /* You may add your own implementation here */
+                        alert('you closed the popup without finishing the payment');
+                        window.location.href = order.redirect
+                    }
+                })
+            },
+            init() {
+                this.$watch('showButtonBuy', (newValue) => {
+                    this.showButtonBuy = newValue
+                });
+
+                this.$watch('itemLengthBelumBayar', (newValue, oldValue) => {
+                        if (oldValue > 0 && newValue > 0) {
+                            this.showButtonBuy = false
+                        }
+                    });
+                localStorage.removeItem('cartSelected')
+
+            },
+            calculateTotalBelumBayar() {
+                let total = parseInt("{{.grand_total_belum_bayar}}");
+
+                return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+            calculateTotalSudahBayar() {
+                let total = parseInt("{{.grand_total_sudah_bayar}}");
+
+                return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+        }))
+    });
+
+</script>
+
+

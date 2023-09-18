@@ -1,0 +1,81 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4 mt-4">
+            {{if ne .message ""}}
+            <div class="alert alert-danger" role="alert" data-mdb-color="danger">
+                {{.message}}
+            </div>
+            {{end}}
+            <h2>Setup Installation</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="/handle-install">
+
+                        <h5>Setup Licence Key</h5>
+                        <!-- Licence input -->
+                        <div class="form-outline mb-4">
+                            <input name="licence_key" type="text" id="l" class="form-control" />
+                            <label class="form-label" for="l">Licence Key</label>
+                        </div>
+
+                        <h5>Setup Admin Data</h5>
+                        <hr>
+
+                        <!-- Name input -->
+                        <div class="form-outline mb-4">
+                            <input name="name" type="text" id="registerName" class="form-control" />
+                            <label class="form-label" for="registerName">Name</label>
+                        </div>
+
+                        <!-- Username input -->
+                        <div class="form-outline mb-4">
+                            <input name="username" type="text" id="registerUsername" class="form-control" required/>
+                            <label class="form-label" for="registerUsername">Username</label>
+                        </div>
+
+                        <!-- Role-->
+                        <input type="hidden" name="role" value="admin">
+
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <input name="email" type="email" id="registerEmail" class="form-control" required />
+                            <label class="form-label" for="registerEmail">Email</label>
+                        </div>
+
+                        <!-- Password input -->
+                        <div class="form-outline mb-4">
+                            <input name="password" type="password" id="password" class="form-control" required />
+                            <label class="form-label" for="password">Password</label>
+                        </div>
+
+                        <!-- Repeat Password input -->
+                        <div class="form-outline mb-4">
+                            <input name="password" type="password" id="confirm_password" class="form-control" />
+                            <label class="form-label" for="confirm_password">Confirm password</label>
+                        </div>
+
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block mb-3">Continue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var password = document.getElementById("password")
+        , confirm_password = document.getElementById("confirm_password");
+
+    function validatePassword(){
+        if(password.value != confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>

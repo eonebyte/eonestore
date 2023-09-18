@@ -1,0 +1,198 @@
+{{template "partials/header_admin" .sessionData}}
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div x-data="banners" class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Products</h3>
+                <hr>
+                <!--Create Category-->
+                <button type="button" class="btn btn-primary mb-4" data-mdb-toggle="modal" data-mdb-target="#createBanner"><i class="fa fa-plus"></i></button>
+                <!-- End Create Category-->
+                <div class="table-responsive-xl">
+                    <table id="dataTableBanner" class="table table-hover w-100">
+                        <thead>
+                        <tr>
+                            <th scope="col">No.</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Image</th>
+                            <th scope="col" class="w-25">Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{range $index, $banner := .banners}}
+                        <tr>
+                            <th scope="row">{{ addIndex $index 1 }}</th>
+                            <td>{{$banner.Name}}</td>
+                            <td>
+                                <img src="/img/banners/{{$banner.Image}}" width="100px;">
+                            </td>
+
+                            <td>
+                                <!--Edit Category-->
+                                <button type="button" data-id="{{$banner.ID}}" data-name="{{$banner.Name}}" class="btn btn-info buttonEditBanner"><i class="far fa-pen-to-square"></i></button>
+                                <!--Delete Category-->
+                                <button type="button" data-id="{{$banner.ID}}" class="btn btn-danger buttonDeleteBanner"><i class="far fa-trash-can"></i></button>
+
+                            </td>
+                        </tr>
+                        {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Create Category -->
+        <div class="modal fade" id="createBanner" tabindex="-1" aria-labelledby="createBannerLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="createBannerLabel">Add Product</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="create-banner" method="post" action="/dashboard/create_banner" enctype="multipart/form-data">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control" id="product-name" required>
+                                <label for="product-name" class="form-label">Name</label>
+                            </div>
+                            <label for="product-image">Image</label>
+                            <div class="form-outline mb-4">
+                                <input type="file" name="image" class="form-control" id="product-image" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="createBanner" type="button" class="btn btn-primary">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Create Category-->
+        <!-- Modal Edit Category -->
+        <div class="modal fade" id="editBanner" tabindex="-1" aria-labelledby="createBannerLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editBannerLabel">Update Banner</h5>
+                        <div x-show="loading" class="spinner-border text-info text-center" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="update-banner" method="post" action="/dashboard/update_banner" enctype="multipart/form-data">
+                            <input type="hidden" name="id" class="id">
+                            <div class="form-outline mb-4">
+                                <input type="text" name="name" class="form-control name" id="product-edit-name" required>
+                                <label for="product-edit-name" class="form-label">Name</label>
+                            </div>
+                            <label for="product-image">Image</label>
+                            <div class="form-outline mb-4">
+                                <input type="file" name="image" class="form-control" id="product-edit-image" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-mdb-dismiss="modal">Close</button>
+                        <button @click="updateBanner" type="button" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--  End Modal Edit Category-->
+
+        <!--Modal: modalConfirmDelete-->
+        <div class="modal fade" id="modalConfirmDeleteBanner" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-sm modal-notify modal-danger" role="document">
+                <!--Content-->
+                <div class="modal-content text-center">
+                    <!--Header-->
+                    <div class="modal-header bg-danger d-flex justify-content-center">
+                        <p class="fs-4 text-white">Are you sure?</p>
+                    </div>
+
+                    <!--Body-->
+                    <div class="modal-body">
+                        <i class="fas fa-times fa-4x animated rotateIn text-danger"></i>
+                    </div>
+
+                    <!--Footer-->
+                    <div class="modal-footer d-flex justify-content-center">
+                        <form id="delete-banner" method="post" action="/dashboard/delete_banner">
+                            <input type="hidden" name="id" class="id">
+                        </form>
+                        <button @click="deleteBanner" class="btn btn-outline-danger">Yes</button>
+                        <button type="button" class="btn  btn-danger waves-effect" data-mdb-dismiss="modal">No</button>
+                    </div>
+                </div>
+                <!--/.Content-->
+            </div>
+        </div>
+        <!--Modal: modalConfirmDelete-->
+    </div>
+
+</main>
+
+<script>
+    $(document).ready(function() {
+        $("#dataTableBanner").DataTable()
+        $(".dataTables_legth").addClass("bs-select")
+        $('#dataTableBanner').on('click', '.buttonEditBanner', function (){
+            let id = $(this).data("id")
+            let name = $(this).data("name")
+
+            $("#editBanner").modal("show");
+            $(".id").val(id)
+            $(".name").val(name)
+        });
+        $('#dataTableBanner').on('click', '.buttonDeleteBanner', function (){
+            let id = $(this).data("id")
+
+            $("#modalConfirmDeleteBanner").modal("show");
+            $(".id").val(id)
+        });
+    });
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('banners', () => ({
+            formCreate: document.getElementById('create-banner'),
+            formUpdate: document.getElementById('update-banner'),
+            formDelete: document.getElementById('delete-banner'),
+            loading: false,
+            deleteBanner(){
+                this.formDelete.submit();
+                this.loading = true
+            },
+            updateBanner(){
+                this.alert_update()
+            },
+            createBanner(){
+                this.alert_create()
+            },
+            alert_create() {
+                if(!confirm("Tambahkan Banner baru ?")) {
+                    return false;
+                }
+                this.formCreate.submit();
+                this.loading = true
+            },
+            alert_update() {
+                if(!confirm("Update Banner ?")) {
+                    return false;
+                }
+                this.formUpdate.submit();
+                this.loading = true
+            },
+        }))
+    });
+</script>
+
+

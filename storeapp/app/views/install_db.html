@@ -1,0 +1,52 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-12 mb-4 mt-4">
+            {{if ne .message ""}}
+            <div class="alert alert-danger" role="alert" data-mdb-color="danger">
+                {{.message}}
+            </div>
+            {{end}}
+            <h2>Setup Installation</h2>
+            <div class="card">
+                <div class="card-body">
+                    <form method="post" action="/handle-install-db">
+
+                        <h5>Setup Database</h5>
+                        <!-- DB input -->
+                        <div class="form-outline mb-4">
+                            <input name="port_app" type="text" id="port" class="form-control" />
+                            <label class="form-label" for="port">PORT APP</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="base_url" type="text" id="base_url" class="form-control" />
+                            <label class="form-label" for="base_url">BASE URL</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="host" type="text" id="db_host" class="form-control" />
+                            <label class="form-label" for="db_host">DB HOST</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="databasePort" type="text" id="db_port" class="form-control" />
+                            <label class="form-label" for="db_port">DB PORT</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="databaseName" type="text" id="db_name" class="form-control" />
+                            <label class="form-label" for="db_name">DB NAME</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="username" type="text" id="db_user" class="form-control" />
+                            <label class="form-label" for="db_user">DB USER</label>
+                        </div>
+                        <div class="form-outline mb-4">
+                            <input name="password" type="password" id="db_password" class="form-control" />
+                            <label class="form-label" for="db_password">DB PASSWORD</label>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block mb-3">Continue</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

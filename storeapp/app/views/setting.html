@@ -1,0 +1,246 @@
+{{template "partials/header_admin" .sessionData}}
+
+
+<!--Main layout-->
+<main class="mt-5 pt-4">
+
+    <div class="container">
+
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h3>Settings</h3>
+                <!-- Tabs navs -->
+                <ul class="nav nav-tabs mb-3" id="ex-with-icons" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link active" id="ex-with-icons-tab-1" data-mdb-toggle="tab" href="#ex-with-icons-tabs-1" role="tab"
+                           aria-controls="ex-with-icons-tabs-1" aria-selected="true"><i class="fas fa-gear fa-fw me-2"></i>General</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-2" data-mdb-toggle="tab" href="#ex-with-icons-tabs-2" role="tab"
+                           aria-controls="ex-with-icons-tabs-2" aria-selected="false"><i class="far fa-envelope fa-fw me-2"></i>Email</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-3" data-mdb-toggle="tab" href="#ex-with-icons-tabs-3" role="tab"
+                           aria-controls="ex-with-icons-tabs-3" aria-selected="false"><i class="fas fa-link fa-fw me-2"></i>Links</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="ex-with-icons-tab-4" data-mdb-toggle="tab" href="#ex-with-icons-tabs-4" role="tab"
+                           aria-controls="ex-with-icons-tabs-4" aria-selected="false"><i class="fas fa-key fa-fw me-2"></i>Key</a>
+                    </li>
+                </ul>
+                <!-- Tabs navs -->
+                <hr>
+                <!-- Tabs content -->
+                <div class="tab-content" id="ex-with-icons-content">
+                    <div class="tab-pane fade show active" id="ex-with-icons-tabs-1" role="tabpanel" aria-labelledby="ex-with-icons-tab-1">
+                       <div class="card">
+                           <div class="card-body">
+                               <form method="post" enctype="multipart/form-data" action="/dashboard/update_setting">
+                                   <input type="hidden" name="id" value="{{.setting.ID}}">
+                                   <div class="form-outline mb-3">
+                                       <input type="text" name="app_name" id="app-name" class="form-control" value="{{.setting.AppName}}" />
+                                       <label class="form-label" for="app-name">App Name</label>
+                                   </div>
+                                   <div class="form-outline mb-3">
+                                       <input type="text" name="license_key" id="license-key" class="form-control" value="{{.setting.LicenseKey}}" />
+                                       <label class="form-label" for="license-key">Licensey Key</label>
+                                   </div>
+                                   <div class="form-outline mb-3">
+                                       <textarea name="contact" class="form-control" id="contact" rows="4">{{.setting.Contact}}</textarea>
+                                       <label class="form-label" for="contact">Contact</label>
+                                   </div>
+                                   <div class="form-outline mb-3">
+                                       <textarea name="address" class="form-control" id="address" rows="4">{{.setting.Address}}</textarea>
+                                       <label class="form-label" for="address">Address</label>
+                                   </div>
+                                   <div class="form-outline mb-3">
+                                       <input type="text" name="footer_text_1" id="f1" class="form-control" value="{{.setting.FooterText1}}" />
+                                       <label class="form-label" for="f1">Footer 1</label>
+                                   </div>
+                                   <div class="form-outline mb-3">
+                                       <input type="text" name="footer_text_2" id="f2" class="form-control" value="{{.setting.FooterText2}}" />
+                                       <label class="form-label" for="f2">Footer 2</label>
+                                   </div>
+                                   <small>Footer 2 optional</small>
+                                   <label class="form-label" for="logo">Logo</label>
+                                   <input type="file" name="logo" class="form-control mb-3" id="logo" />
+                                   <label class="form-label" for="favicon">Favicon</label>
+                                   <input type="file" name="favicon" class="form-control mb-3" id="favicon" />
+                                   <div class="text-center">
+                                       <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                   </div>
+                               </form>
+                           </div>
+                       </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-2" role="tabpanel" aria-labelledby="ex-with-icons-tab-2">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data" action="/dashboard/update_setting">
+                                    <input type="hidden" name="id" value="{{.setting.ID}}">
+                                    <div class="form-outline mb-3">
+                                        <input type="email" name="email" id="email" class="form-control" value="{{.setting.Email}}" />
+                                        <label class="form-label" for="email">Email</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="smtp_host" id="smtp_host" class="form-control" value="{{.setting.SmtpHost}}" />
+                                        <label class="form-label" for="smtp_host">SMTP HOST</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="smtp_port" id="smtp_port" class="form-control" value="{{.setting.SmtpPort}}" />
+                                        <label class="form-label" for="smtp_port">SMTP PORT</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="password" name="email_password" id="email_password" class="form-control" value="{{.setting.EmailPassword}}" />
+                                        <label class="form-label" for="email_password">Email Password</label>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-3" role="tabpanel" aria-labelledby="ex-with-icons-tab-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data" action="/dashboard/update_setting">
+                                    <input type="hidden" name="id" value="{{.setting.ID}}">
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="instagram_url" id="ig" class="form-control" value="{{.setting.InstagramUrl}}" />
+                                        <label class="form-label" for="ig">Instagram Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="facebook_url" id="fb" class="form-control" value="{{.setting.FacebookUrl}}" />
+                                        <label class="form-label" for="fb">Facebook Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="wa_url" id="wa" class="form-control" value="{{.setting.WaUrl}}" />
+                                        <label class="form-label" for="wa">WA</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="twitter_url" id="t" class="form-control" value="{{.setting.TwitterUrl}}" />
+                                        <label class="form-label" for="t">Twitter Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="tiktok_url" id="tiktok" class="form-control" value="{{.setting.TiktokUrl}}" />
+                                        <label class="form-label" for="tiktok">Tiktok Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="shopee_url" id="s" class="form-control" value="{{.setting.ShopeeUrl}}" />
+                                        <label class="form-label" for="s">Shopee Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="tokped_url" id="tokped" class="form-control" value="{{.setting.TokpedUrl}}" />
+                                        <label class="form-label" for="tokped">Tokped Url</label>
+                                    </div>
+                                    <div class="form-outline mb-3">
+                                        <input type="text" name="bukalapak_url" id="bl" class="form-control" value="{{.setting.BukalapakUrl}}" />
+                                        <label class="form-label" for="bl">Bukalapak Url</label>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane fade" id="ex-with-icons-tabs-4" role="tabpanel" aria-labelledby="ex-with-icons-tab-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" enctype="multipart/form-data" action="/dashboard/update_setting">
+                                    <input type="hidden" name="id" value="{{.setting.ID}}">
+                                    <div class="form-outline mb-3">
+                                        <input type="password" name="key_midtrans" id="midtrans" class="form-control" value="{{.setting.KeyMidtrans}}" />
+                                        <label class="form-label" for="midtrans">Key Midtrans</label>
+                                    </div>
+                                    <div class="form-outline mb-1">
+                                        <input type="password" name="authorization_midtrans" id="a-midtrans" class="form-control" value="{{.setting.KeyMidtrans}}" />
+                                        <label class="form-label" for="a-midtrans">Authorization Midtrans</label>
+                                    </div>
+                                    <small>cara membuat Authorization Midtrans : <a target="_blank" href="https://docs.midtrans.com/reference/get-transaction-status">di sini</a></small>
+                                    <div class="form-outline mb-3 mt-3">
+                                        <input type="password" name="key_raja_ongkir" id="raja_ongkir" class="form-control" value="{{.setting.KeyRajaOngkir}}" />
+                                        <label class="form-label" for="raja_ongkir">Key Raja Ongkir</label>
+                                    </div>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <!-- Tabs content -->
+            </div>
+        </div>
+
+    </div>
+
+</main>
+
+<script>
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('setting', () => ({
+            loading: false,
+            showButtonBuy: true,
+            itemLengthBelumBayar: "{{.item_length_belum_bayar}}",
+            itemLengthSudahBayar: "{{.item_length_sudah_bayar}}",
+            bayarSekarang(token){
+                window.snap.pay(`${token}`, {
+                    onSuccess: async function (result) {
+                        /* You may add your own implementation here */
+                        alert("payment success!");
+                        window.location.href = result.finish_redirect_url
+                    },
+                    onPending: async function (result) {
+                        window.location.href = result.finish_redirect_url
+
+                    },
+                    onError: function (result) {
+                        /* You may add your own implementation here */
+                        alert("payment failed!");
+                        console.log(result)
+                        window.location.href = result.finish_redirect_url
+                    },
+                    onClose: function () {
+                        /* You may add your own implementation here */
+                        alert('you closed the popup without finishing the payment');
+                        window.location.href = '/dashboard/orders'
+                    }
+                })
+            },
+            init() {
+                this.$watch('showButtonBuy', (newValue) => {
+                    this.showButtonBuy = newValue
+                });
+
+                this.$watch('itemLengthBelumBayar', (newValue, oldValue) => {
+                    if (oldValue > 0 && newValue > 0) {
+                        this.showButtonBuy = false
+                    }
+                });
+                localStorage.removeItem('cartSelected')
+
+            },
+            calculateTotalBelumBayar() {
+                let total = parseInt("{{.grand_total_belum_bayar}}");
+
+                return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+            calculateTotalSudahBayar() {
+                let total = parseInt("{{.grand_total_sudah_bayar}}");
+
+                return total.toLocaleString('id-ID'); // Menampilkan total dengan format rupiah
+            },
+        }))
+    });
+
+</script>
+
+
